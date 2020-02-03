@@ -35,7 +35,7 @@ if [ -f bin/ffmpeg ] && [ -f bin/ffprobe ]; then
 else
   _info "Downloading ffmpeg and ffprobe ..."
   cd bin
-  curl-s -o "ffmpeg.tar.xz" "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
+  curl -s -o "ffmpeg.tar.xz" "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
   tar -xf "ffmpeg.tar.xz"
   rm "ffmpeg.tar.xz"
 
