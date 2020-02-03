@@ -116,7 +116,7 @@ module.exports = Rclone = {
         const source = Paths.parseRclonePaths(validSource, payload.full_path);
 
         Logger.info(`Getting list of episodes from ${source}`);
-        const command = `${Paths.rclonePath} lsf "${source}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
+        const command = `${Paths.rclonePath} lsf "${source}" --files-only -R ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         const response = await Promisefied.exec(command);
         const arrOfEpisodes = response.split('\n').slice(0, -1);
         // Logger.debug(arrOfEpisodes);
