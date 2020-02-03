@@ -25,6 +25,14 @@ _info () {
   echo -e "${FG_CYAN}i ${FG_WHITE}${1}${DEFAULT}"
 }
 
+_warning () {
+  echo -e "${FG_YELLOW}✖ ${FG_WHITE}${1}${DEFAULT}"
+}
+
+_error () {
+  echo -e "${FG_RED}✖ ${FG_WHITE}${1}${DEFAULT}"
+}
+
 _info "POST /encode + No authorization"
 http_status_code=$(curl -i -s -X POST \
   -H "Content-Type: application/json" \
@@ -32,6 +40,8 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "401" ]; then
   _success "401 returned"
+else
+  _error "401 not returned"
 fi
 
 _info "POST /encode + No Content-Type"
@@ -41,6 +51,8 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "415" ]; then
   _success "415 returned"
+else
+  _error "401 not returned"
 fi
 
 _info "POST /encode + Incomplete JSON body"
@@ -51,6 +63,8 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "400" ]; then
   _success "400 returned"
+else
+  _error "401 not returned"
 fi
 
 _info "POST /encode"
@@ -61,6 +75,8 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
+else
+  _error "401 not returned"
 fi
 
 _info "POST /encode + Duplicate"
@@ -71,6 +87,8 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "409" ]; then
   _success "409 returned"
+else
+  _error "401 not returned"
 fi
 
 _info "POST /batch"
@@ -81,4 +99,6 @@ http_status_code=$(curl -i -s -X POST \
   http://localhost:64000/batch | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
+else
+  _error "401 not returned"
 fi
