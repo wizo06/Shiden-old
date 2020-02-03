@@ -32,6 +32,10 @@
     "arrow-parens": [
       "error",
       "as-needed"
+    ],
+    "indent": [
+      "error",
+      2
     ]
   }
 }
