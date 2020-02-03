@@ -18,11 +18,11 @@ FG_CYAN="\033[1;36m"
 FG_WHITE="\033[1;37m"
 
 _success () {
-  echo -e "${FG_GREEN}✔ ${FG_WHITE}${1}${DEFAULT}"
+  echo -e "${FG_GREEN}✔  ${FG_WHITE}${1}${DEFAULT}"
 }
 
 _info () {
-  echo -e "${FG_CYAN}i ${FG_WHITE}${1}${DEFAULT}"
+  echo -e "${FG_CYAN}i  ${FG_WHITE}${1}${DEFAULT}"
 }
 
 script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -54,12 +54,12 @@ else
 fi
 
 if [ -f bin/rclone ]; then
-  _success "Found rclone binary"
+  _success "Found Rclone binary"
 else
   _info "Downloading rclone ..."
   cd bin
   curl -s -o "rclone.zip" "https://downloads.rclone.org/rclone-current-linux-amd64.zip"
-  unzip rclone.zip
+  unzip -qq rclone.zip
   rm rclone.zip
 
   _info "Moving rclone binary to bin/ ..."
@@ -82,8 +82,12 @@ else
   bin/rclone config --config conf/rclone.conf
 fi
 
-_info "Installing node modules"
-npm i
+if [ -d node_modules ]; then
+  _success "Found node modules/"
+else
+  _info "Installing node modules"
+  npm i
+fi
 
 branch_name=$(cat .git/HEAD | cut -d "/" -f 3)
 if [ "${branch_name}" == "master" ]; then
