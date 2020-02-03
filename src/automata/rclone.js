@@ -141,7 +141,7 @@ module.exports = Rclone = {
 
         command = `${Paths.rclonePath} lsf "${source}" --dirs-only --include "${lastFolder}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         response = await Promisefied.exec(command);
-        Logger.debug(response);
+        Logger.debug(`Folder found: ${response}`);
         if (response === '') resolve(false);
         else resolve(true);
       }
