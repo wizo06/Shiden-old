@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const Discord = require('discord.js');
 const DISCORD_BOT = new Discord.Client();
+module.exports = DISCORD_BOT;
 require('toml-require').install({ toml: require('toml') });
 
 // master will be set to TRUE if current git branch name is 'master'
@@ -36,7 +37,7 @@ app.use(postEncode);
 
 app.use(postBatch);
 
-app.all(catchAll);
+app.use(catchAll);
 
 app.listen(CONFIG.express.port, async () => {
   if (!master) Logger.warning(`Running on DEV mode`);

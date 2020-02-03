@@ -1,6 +1,8 @@
 // Import node modules
-const Discord = require('discord.js');
-const DISCORD_BOT = new Discord.Client();
+const path = require('path');
+
+// Import discord bot instance
+const DISCORD_BOT = require(path.join(process.cwd(), 'src/server.js'));
 
 // Import custom modules
 const Encoder = require(path.join(process.cwd(), 'src/automata/encoder.js'));
