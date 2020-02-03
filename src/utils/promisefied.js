@@ -1,5 +1,5 @@
 // Import node modules
-// const path = require('path');
+const path = require('path');
 const { exec } = require('child_process');
 const request = require('request');
 
