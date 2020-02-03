@@ -10,7 +10,7 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - [Start up Shiden](#start-up-shiden)
 - [Usage](#usage)
   - [GET](#GET)
-    - /
+    - [/queue](#queue)
   - [POST](#POST)
     - [/encode](#encode)
     - [/batch](#batch)
@@ -72,7 +72,7 @@ then `node src/app.js --clean` => `npm start -- --clean`.
 
 ## GET
 
-### `/`
+### `/queue`
   - Returns the current queue in an array.
 
 ## POST

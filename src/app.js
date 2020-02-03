@@ -24,6 +24,9 @@ const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
 const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
 
+// Import routes
+const getQueue = require(path.join(process.cwd(), 'src/routes/getQueue.js'));
+
 const processNextPayload = async () => {
   try {
     Logger.info(`[0/4] Processing next payload in queue`, Logger.Colors.Bright + Logger.Colors.FgCyan);
@@ -65,15 +68,8 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/', async (req, res) => {
-  try {
-    if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
-    res.send(await Queue.get());
-  }
-  catch (e) {
-    Logger.error(e);
-  }
-});
+// Define routes
+app.use(getQueue);
 
 app.post('/encode', async (req, res) => {
   try {
