@@ -143,7 +143,7 @@ module.exports = Queue = {
       }
       catch (e) {
         Logger.debug(`Queue file does not exist.`);
-        reject();
+        resolve();
       }
     });
   },

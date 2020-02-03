@@ -1,5 +1,6 @@
 // Import node modules
 const path = require('path');
+const util = require('util');
 
 // Import discord bot instance
 const DISCORD_BOT = require(path.join(process.cwd(), 'src/server.js'));
@@ -17,7 +18,7 @@ const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
 module.exports = processNextPayload = async () => {
   try {
     Logger.info(`[0/4] Processing next payload in queue`, Logger.Colors.Bright + Logger.Colors.FgCyan);
-    console.log(util.inspect(await Queue.getFirst()));
+    console.log(util.inspect(await Queue.getFirst()), { colors: true });
     Logger.info('[1/4] Downloading episode file...', Logger.Colors.FgCyan);
     if (CONFIG.discord_bot.token) await DISCORD_BOT.user.setActivity('download', { type: 'PLAYING' });
     await Rclone.download();

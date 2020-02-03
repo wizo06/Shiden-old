@@ -26,6 +26,8 @@ const postEncode = require(path.join(process.cwd(), 'src/routes/postEncode.js'))
 const postBatch = require(path.join(process.cwd(), 'src/routes/postBatch.js'));
 const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
 
+const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
+
 const app = express();
 
 app.use(express.json());
