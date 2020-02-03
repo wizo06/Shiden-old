@@ -21,11 +21,11 @@ module.exports = Rclone = {
 
         command = `${Paths.rclonePath} lsf "${source}" --files-only ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         response = await Promisefied.exec(command);
-        // Logger.debug(response)
+        Logger.debug(response);
         resolve(true);
       }
       catch (e) {
-        // Logger.error(e);
+        Logger.error(e);
         resolve(false);
       }
     });
@@ -119,7 +119,7 @@ module.exports = Rclone = {
         const command = `${Paths.rclonePath} lsf "${source}" --files-only -R ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         const response = await Promisefied.exec(command);
         const arrOfEpisodes = response.split('\n').slice(0, -1);
-        // Logger.debug(arrOfEpisodes);
+        Logger.debug(arrOfEpisodes);
         resolve(arrOfEpisodes);
       }
       catch (e) {
@@ -141,12 +141,12 @@ module.exports = Rclone = {
 
         command = `${Paths.rclonePath} lsf "${source}" --dirs-only --include "${lastFolder}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         response = await Promisefied.exec(command);
-        // Logger.debug(response)
+        Logger.debug(`Folder found: ${response}`);
         if (response === '') resolve(false);
         else resolve(true);
       }
       catch (e) {
-        // Logger.error(e);
+        Logger.error(e);
         resolve(false);
       }
     });

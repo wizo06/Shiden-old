@@ -58,7 +58,7 @@ module.exports = Queue = {
         resolve();
       }
       catch (queueFilePath) {
-        // Logger.debug('Queue file does not exist. Write to file without reading first.');
+        Logger.debug('Queue file does not exist. Write to file without reading first.');
         const queue = [payload];
         Logger.info(`Queueing payload`);
         Queue.writeFile(queueFilePath, queue);
@@ -104,16 +104,16 @@ module.exports = Queue = {
         const queueFilePath = await Queue.getFilePath();
         const queue = Queue.readFile(queueFilePath);
         if (queue.length) {
-          // Logger.debug(`Queue still has payloads`)
+          Logger.debug(`Queue still has payloads`);
           resolve(false);
         }
         else {
-          // Logger.debug(`Queue is empty`)
+          Logger.debug(`Queue is empty`);
           resolve(true);
         }
       }
       catch (e) {
-        // Logger.debug(`Queue file does not exist. Queue is empty.`);
+        Logger.debug(`Queue file does not exist. Queue is empty.`);
         resolve(true);
       }
     });
@@ -143,7 +143,7 @@ module.exports = Queue = {
       }
       catch (e) {
         Logger.debug(`Queue file does not exist.`);
-        reject();
+        resolve();
       }
     });
   },

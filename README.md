@@ -10,7 +10,7 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - [Start up Shiden](#start-up-shiden)
 - [Usage](#usage)
   - [GET](#GET)
-    - /
+    - [/queue](#queue)
   - [POST](#POST)
     - [/encode](#encode)
     - [/batch](#batch)
@@ -59,10 +59,10 @@ npm start -- --clean
 **Note** the `--` after `npm start` is necessary. This is how you pass arguments to `npm`. If your `package.json` looks like this:
 ```json
 "scripts": {
-  "start": "node src/app.js"
+  "start": "node src/server.js"
 }
 ```
-then `node src/app.js --clean` => `npm start -- --clean`.
+then `node src/server.js --clean` => `npm start -- --clean`.
 
 - Here is the [pull request](https://github.com/npm/npm/pull/5518) for this feature.
 - [Official documentation](https://docs.npmjs.com/cli/run-script) of this feature.
@@ -72,7 +72,7 @@ then `node src/app.js --clean` => `npm start -- --clean`.
 
 ## GET
 
-### `/`
+### `/queue`
   - Returns the current queue in an array.
 
 ## POST

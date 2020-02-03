@@ -52,7 +52,7 @@ http_status_code=$(curl -i -s -X POST \
 if [ "${http_status_code}" == "415" ]; then
   _success "415 returned"
 else
-  _error "401 not returned"
+  _error "415 not returned"
 fi
 
 _info "POST /encode + Incomplete JSON body"
@@ -64,7 +64,7 @@ http_status_code=$(curl -i -s -X POST \
 if [ "${http_status_code}" == "400" ]; then
   _success "400 returned"
 else
-  _error "401 not returned"
+  _error "400 not returned"
 fi
 
 _info "POST /encode"
@@ -76,7 +76,7 @@ http_status_code=$(curl -i -s -X POST \
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
 else
-  _error "401 not returned"
+  _error "209 not returned"
 fi
 
 _info "POST /encode + Duplicate"
@@ -88,7 +88,7 @@ http_status_code=$(curl -i -s -X POST \
 if [ "${http_status_code}" == "409" ]; then
   _success "409 returned"
 else
-  _error "401 not returned"
+  _error "409 not returned"
 fi
 
 _info "POST /batch"
@@ -100,5 +100,5 @@ http_status_code=$(curl -i -s -X POST \
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
 else
-  _error "401 not returned"
+  _error "209 not returned"
 fi
