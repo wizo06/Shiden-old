@@ -6,9 +6,8 @@ It downloads from and uploads to remote/local storages using **rclone**.
 - [Features](#features)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
-  - [External connection](#external-connection)
-  - [Config](#config)
-  - [Start up the server](#start-up-the-server)
+  - [Configure](#configure)
+  - [Start up Shiden](#start-up-shiden)
 - [Usage](#usage)
   - [GET](#GET)
     - /
@@ -28,11 +27,6 @@ It downloads from and uploads to remote/local storages using **rclone**.
 - Option to specify stream index for video, audio and/or subtitle
 - Language priority for subtitles when deciding which subtitle stream to use for hardsubbing
 - Discord notification with webhooks
-
-# TODO
-- [ ] Hardsub with OpenSans first. If it fails, retry with NotoSansJP.
-- [ ] Option to specify Fontstyle for text based subtitles
-- [ ] (maybe?) Refactor to use Task Queue (either [Bee-Queue](https://github.com/bee-queue/bee-queue) or [Bull](https://github.com/OptimalBits/bull))
 
 # Requirements
 - x86_64 CPU architecture
