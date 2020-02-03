@@ -124,7 +124,7 @@ module.exports = Rclone = {
       }
       catch (e) {
         Logger.error(e);
-        reject(6);
+        reject(7);
       }
     });
   },
