@@ -30,6 +30,7 @@ It downloads from and uploads to remote/local storages using **rclone**.
 - Discord notification with webhooks
 
 # TODO
+- [ ] Hardsub with OpenSans first. If it fails, retry with NotoSansJP.
 - [ ] Option to specify Fontstyle for text based subtitles
 - [ ] (maybe?) Refactor to use Task Queue (either [Bee-Queue](https://github.com/bee-queue/bee-queue) or [Bull](https://github.com/OptimalBits/bull))
 
