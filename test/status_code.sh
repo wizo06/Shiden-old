@@ -33,72 +33,82 @@ _error () {
   echo -e "${FG_RED}✖ ${FG_WHITE}${1}${DEFAULT}"
 }
 
-_info "POST /encode + No authorization"
+_info "POST /hardsub/file + No authorization"
 http_status_code=$(curl -i -s -X POST \
   -H "Content-Type: application/json" \
   -d '{ "show": "Fate Kaleid", "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "401" ]; then
   _success "401 returned"
 else
   _error "401 not returned"
 fi
 
-_info "POST /encode + No Content-Type"
+_info "POST /hardsub/file + No Content-Type"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -d '{ "show": "Fate Kaleid", "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "415" ]; then
   _success "415 returned"
 else
   _error "415 not returned"
 fi
 
-_info "POST /encode + Incomplete JSON body"
+_info "POST /hardsub/file + Incomplete JSON body"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
   -d '{ "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "400" ]; then
   _success "400 returned"
 else
   _error "400 not returned"
 fi
 
-_info "POST /encode"
+_info "POST /hardsub/file"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
   -d '{ "show": "Fate Kaleid", "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
 else
   _error "209 not returned"
 fi
 
-_info "POST /encode + Duplicate"
+_info "POST /hardsub/file + Duplicate"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
   -d '{ "show": "Fate Kaleid", "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/encode | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "409" ]; then
   _success "409 returned"
 else
   _error "409 not returned"
 fi
 
-_info "POST /batch"
+_info "POST /hardsub/folder"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
   -d '{ "show": "Grand Blue", "full_path": "Premiered/Grand Blue" }' \
-  http://localhost:64000/batch | grep "HTTP" | cut -d " " -f 2)
+  http://localhost:64000/hardsub/folder | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
 else
   _error "209 not returned"
+fi
+
+_info "GET /queue"
+http_status_code=$(curl -i -s -X GET \
+  -H "Authorization: authorization_key_1" \
+  http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
+if [ "${http_status_code}" == "200" ]; then
+  _success "200 returned"
+else
+  _error "200 not returned"
 fi

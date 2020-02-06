@@ -12,7 +12,9 @@ const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 // Import pipeline flow
 const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
 
-module.exports = router.post('/batch', async (req, res) => {
+const endpoint = __dirname.replace(path.join(process.cwd(), 'src/routes'), '');
+
+module.exports = router.post(endpoint, async (req, res) => {
   try {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');

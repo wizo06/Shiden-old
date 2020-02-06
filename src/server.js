@@ -21,9 +21,9 @@ const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
 // Import routes
-const getQueue = require(path.join(process.cwd(), 'src/routes/getQueue.js'));
-const postEncode = require(path.join(process.cwd(), 'src/routes/postEncode.js'));
-const postBatch = require(path.join(process.cwd(), 'src/routes/postBatch.js'));
+const hardsubFilePost = require(path.join(process.cwd(), 'src/routes/hardsub/file/post.js'));
+const hardsubFolderPost = require(path.join(process.cwd(), 'src/routes/hardsub/folder/post.js'));
+const queueGet = require(path.join(process.cwd(), 'src/routes/queue/get.js'));
 const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
 
 // Import pipeline flow
@@ -35,12 +35,9 @@ const app = express();
 app.use(express.json());
 
 // Define routes
-app.use(getQueue);
-
-app.use(postEncode);
-
-app.use(postBatch);
-
+app.use(queueGet);
+app.use(hardsubFilePost);
+app.use(hardsubFolderPost);
 app.use(catchAll);
 
 app.listen(CONFIG.express.port, async () => {
