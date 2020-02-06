@@ -1,9 +1,14 @@
+/**
+ * @fileoverview The flow in which Shiden will process each payload.
+ * 1. Download
+ * 2. Hardsub
+ * 3. Uplaod
+ * 4. Notify
+ */
+
 // Import node modules
 const path = require('path');
 const util = require('util');
-
-// Import discord bot instance
-const DISCORD_BOT = require(path.join(process.cwd(), 'src/server.js'));
 
 // Import custom modules
 const Encoder = require(path.join(process.cwd(), 'src/automata/encoder.js'));
@@ -12,8 +17,10 @@ const Notification = require(path.join(process.cwd(), 'src/automata/notification
 const Rclone = require(path.join(process.cwd(), 'src/automata/rclone.js'));
 const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
-
 const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
+
+// Import discord bot instance
+const DISCORD_BOT = require(path.join(process.cwd(), 'src/server.js'));
 
 module.exports = processNextPayload = async () => {
   try {

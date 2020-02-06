@@ -95,7 +95,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | Field | Required | Description |
 | --- | --- | --- |
 | show | Yes | Used for metadata when sending out notifications |
-| full_path | Yes | Used to attempt download and upload |
+| full_path | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
@@ -119,7 +119,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | Field | Required | Description |
 | --- | --- | --- |
 | show | Yes | Used for metadata when sending out notifications |
-| full_path | Yes | Used to attempt download and upload |
+| full_path | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
