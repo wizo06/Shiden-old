@@ -119,7 +119,7 @@ module.exports = Ffprobe = {
     let preferredFound = false;
 
     for (lang of subtitle.language) {
-      // Logger.debug(`Looking for subtitle stream with language ${lang}`);
+      Logger.debug(`Looking for subtitle stream with language ${lang}`);
       const textSubStream = streams.filter(stream => {
         if (stream.tags) {
           const textBasedCodec = (stream.codec_name === 'srt' || stream.codec_name === 'ass');

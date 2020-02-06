@@ -22,8 +22,8 @@ const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD
 
 // Import routes
 const hardsubFilePost = require(path.join(process.cwd(), 'src/routes/hardsub/file/post.js'));
-const hardsubFileDelete = require(path.join(process.cwd(), 'src/routes/hardsub/file/delete.js'));
 const hardsubFolderPost = require(path.join(process.cwd(), 'src/routes/hardsub/folder/post.js'));
+const queueDelete = require(path.join(process.cwd(), 'src/routes/queue/delete.js'));
 const queueGet = require(path.join(process.cwd(), 'src/routes/queue/get.js'));
 const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
 
@@ -39,10 +39,10 @@ const app = express();
 app.use(express.text({ type: 'application/json' }));
 
 // Define routes
-app.use(queueGet);
 app.use(hardsubFilePost);
-app.use(hardsubFileDelete);
 app.use(hardsubFolderPost);
+app.use(queueDelete);
+app.use(queueGet);
 app.use(catchAll);
 
 app.listen(CONFIG.express.port, async () => {

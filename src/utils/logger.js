@@ -1,6 +1,12 @@
 // Import node modules
 const moment = require('moment');
-// const path = require('path');
+const fs = require('fs');
+const path = require('path');
+
+// master will be set to TRUE if current git branch name is 'master'
+const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
+
+const verbosity = process.argv.slice(2).includes('--quiet');
 
 module.exports = Logger = {
   Colors: {
@@ -45,7 +51,8 @@ module.exports = Logger = {
   },
 
   debug: (data, color = Logger.Colors.FgYellow) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][DEBUG]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+    (master || verbosity) ? '' :
+      console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][DEBUG]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
   },
 
   warning: (data, color = Logger.Colors.Bright + Logger.Colors.FgYellow) => {

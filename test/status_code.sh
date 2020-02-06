@@ -55,6 +55,18 @@ else
   _error "415 not returned"
 fi
 
+_info "POST /hardsub/file + SyntaxError JSON body"
+http_status_code=$(curl -i -s -X POST \
+  -H "Authorization: authorization_key_1" \
+  -H "Content-Type: application/json" \
+  -d '{ "show": "Fate Kaleid" "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
+  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
+if [ "${http_status_code}" == "400" ]; then
+  _success "400 returned"
+else
+  _error "400 not returned"
+fi
+
 _info "POST /hardsub/file + Incomplete JSON body"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
@@ -78,6 +90,8 @@ if [ "${http_status_code}" == "209" ]; then
 else
   _error "209 not returned"
 fi
+
+sleep 1
 
 _info "POST /hardsub/file + Duplicate"
 http_status_code=$(curl -i -s -X POST \
@@ -111,4 +125,30 @@ if [ "${http_status_code}" == "200" ]; then
   _success "200 returned"
 else
   _error "200 not returned"
+fi
+
+_info "DELETE /queue + Invalid file name"
+http_status_code=$(curl -i -s -X DELETE \
+  -H "Authorization: authorization_key_1" \
+  -H "Content-Type: application/json" \
+  -d '{ "show": "Grand Blue", "full_path": "Premiered/Grand Blue/Grand Blue - 00 [1080p].mkv" }' \
+  http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
+if [ "${http_status_code}" == "404" ]; then
+  _success "404 returned"
+else
+  _error "404 not returned"
+fi
+
+sleep 5
+
+_info "DELETE /queue"
+http_status_code=$(curl -i -s -X DELETE \
+  -H "Authorization: authorization_key_1" \
+  -H "Content-Type: application/json" \
+  -d '{ "show": "Grand Blue", "full_path": "Premiered/Grand Blue/Grand Blue - 01 [1080p].mkv" }' \
+  http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
+if [ "${http_status_code}" == "209" ]; then
+  _success "209 returned"
+else
+  _error "209 not returned"
 fi

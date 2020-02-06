@@ -9,34 +9,25 @@ const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 
-// Import pipeline flow
-const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
-
 const endpoint = __dirname.replace(path.join(process.cwd(), 'src/routes'), '');
 
-module.exports = router.post(endpoint, async (req, res) => {
+module.exports = router.delete(endpoint, async (req, res) => {
   try {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.show && payload.full_path)) return res.status(400).send('JSON body must have "show" and "full_path"');
-    if (await Queue.includes(payload)) return res.status(409).send('Payload is in queue already');
-
-    res.status(209).send('Payload accepted');
+    if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
 
     Logger.info(`Loaded show: ${payload.show}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
     Logger.info(`Loaded episode: ${path.basename(payload.full_path)}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-
-    if (await Queue.isEmpty()) {
-      await Queue.push(payload);
-      processNextPayload();
+    if (await Queue.includes(payload)) {
+      await Queue.removePayload(payload);
+      return res.status(209).send('Payload deleted');
     }
-    else {
-      await Queue.push(payload);
-    }
+    else return res.status(404).send('Payload not found in queue');
   }
   catch (e) {
-    Logger.debug(e);
+    Logger.error(e);
 
     if (e.includes('SyntaxError')) return res.status(400).send(e);
     else return res.status(500).send('Unknown error');

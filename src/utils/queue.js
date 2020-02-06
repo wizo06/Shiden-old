@@ -31,7 +31,7 @@ module.exports = Queue = {
         const queue = Queue.readFile(queueFilePath);
         const filtered = queue.filter(queueItem => queueItem.full_path === payload.full_path)[0];
         if (filtered) {
-          Logger.info(`New request denied: ${payload.full_path} is in queue already`);
+          Logger.debug(`New request denied: ${payload.full_path} is in queue already`);
           resolve(true);
         }
         else {
@@ -53,14 +53,14 @@ module.exports = Queue = {
         const queueFilePath = await Queue.getFilePath();
         const queue = Queue.readFile(queueFilePath);
         queue.push(payload);
-        Logger.info(`Queueing payload`);
+        Logger.debug(`Queueing payload`);
         Queue.writeFile(queueFilePath, queue);
         resolve();
       }
       catch (queueFilePath) {
         Logger.debug('Queue file does not exist. Write to file without reading first.');
         const queue = [payload];
-        Logger.info(`Queueing payload`);
+        Logger.debug(`Queueing payload`);
         Queue.writeFile(queueFilePath, queue);
         resolve();
       }
@@ -144,6 +144,22 @@ module.exports = Queue = {
       catch (e) {
         Logger.debug(`Queue file does not exist.`);
         resolve();
+      }
+    });
+  },
+
+  removePayload: payload => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const queueFilePath = await Queue.getFilePath();
+        const queue = Queue.readFile(queueFilePath);
+        const filtered = queue.filter(queueItem => !queueItem.full_path.includes(payload.full_path));
+        Queue.writeFile(queueFilePath, filtered);
+        resolve();
+      }
+      catch (e) {
+        Logger.debug(`Queue file does not exist.`);
+        reject();
       }
     });
   },

@@ -10,7 +10,7 @@ const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
 try {
-  if (!master) Logger.warning(`Running on DEV mode`);
+  // if (!master) Logger.warning(`Running on DEV mode`);
   if (master) module.exports = require(path.join(process.cwd(), 'conf/user_config.toml'));
   else module.exports = require(path.join(process.cwd(), 'conf/dev_config.toml'));
 }

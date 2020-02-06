@@ -12,7 +12,7 @@ const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD
 module.exports = Auth = {
   authorize: tokenFromRequest => {
     try {
-      if (!master) Logger.warning(`Running on DEV mode`);
+      // if (!master) Logger.warning(`Running on DEV mode`);
       let authPath;
       if (master) authPath = path.join(process.cwd(), 'conf/user_auth.yml');
       else authPath = path.join(process.cwd(), 'conf/dev_auth.yml');
@@ -20,12 +20,12 @@ module.exports = Auth = {
 
       for (user in obj) {
         if (obj[user] === tokenFromRequest) {
-          Logger.info(`Request authorized`);
-          Logger.info(`Matching key was sent from ${user}`);
+          Logger.debug(`Request authorized`);
+          Logger.debug(`Matching key was sent from ${user}`);
           return true;
         }
       }
-      Logger.info(`Request denied`);
+      Logger.debug(`Request denied`);
       return false;
     }
     catch (e) {
