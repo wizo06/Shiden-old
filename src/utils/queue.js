@@ -154,12 +154,14 @@ module.exports = Queue = {
         const queueFilePath = await Queue.getFilePath();
         const queue = Queue.readFile(queueFilePath);
         const filtered = queue.filter(queueItem => !queueItem.full_path.includes(payload.full_path));
+
+        if (filtered.length === queue.length) return reject('Payload not found');
         Queue.writeFile(queueFilePath, filtered);
         resolve();
       }
       catch (e) {
         Logger.debug(`Queue file does not exist.`);
-        reject();
+        reject(`Queue file does not exist.`);
       }
     });
   },

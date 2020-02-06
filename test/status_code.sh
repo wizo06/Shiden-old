@@ -152,3 +152,15 @@ if [ "${http_status_code}" == "209" ]; then
 else
   _error "209 not returned"
 fi
+
+_info "DELETE /queue"
+http_status_code=$(curl -i -s -X DELETE \
+  -H "Authorization: authorization_key_1" \
+  -H "Content-Type: application/json" \
+  -d '{ "show": "Grand Blue", "full_path": "Premiered/Grand Blue" }' \
+  http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
+if [ "${http_status_code}" == "209" ]; then
+  _success "209 returned"
+else
+  _error "209 not returned"
+fi

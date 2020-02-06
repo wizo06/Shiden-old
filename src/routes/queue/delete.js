@@ -19,17 +19,17 @@ module.exports = router.delete(endpoint, async (req, res) => {
     if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
 
     Logger.info(`Loaded show: ${payload.show}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-    Logger.info(`Loaded episode: ${path.basename(payload.full_path)}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-    if (await Queue.includes(payload)) {
-      await Queue.removePayload(payload);
-      return res.status(209).send('Payload deleted');
-    }
-    else return res.status(404).send('Payload not found in queue');
+    Logger.info(`Loaded full_path: ${payload.full_path}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+
+    await Queue.removePayload(payload);
+    return res.status(209).send('Payload deleted');
   }
   catch (e) {
-    Logger.error(e);
+    Logger.debug(e);
 
     if (e.includes('SyntaxError')) return res.status(400).send(e);
+    if (e.includes('Payload not found')) return res.status(404).send(e);
+    if (e.includes('Queue file does not exist')) return res.status(404).send('Queue is empty');
     else return res.status(500).send('Unknown error');
   }
 });
