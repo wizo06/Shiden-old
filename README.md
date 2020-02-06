@@ -129,7 +129,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 ## DELETE
 
 ### `/queue`
-  - Delete all payloads in the queue that matches the provided string
+  - Delete **all payloads** in the queue that **matches the provided string**
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
   - The JSON in the body should look like this
