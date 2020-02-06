@@ -1,6 +1,6 @@
 // Import node modules
 const moment = require('moment');
-const path = require('path');
+// const path = require('path');
 
 module.exports = Logger = {
   Colors: {
@@ -25,8 +25,16 @@ module.exports = Logger = {
   getCallingDetails: () => {
     const err = new Error();
     const frame = err.stack.split('\n')[3];
-    // let filename = path.basename(frame).split(':')[0];
-    const filename = path.basename(frame).replace(')', '');
+
+    // filename (no row, no clumn)
+    // const filename = path.basename(frame).split(':')[0];
+
+    // filename:row:column
+    // const filename = path.basename(frame).replace(')', '');
+
+    // /absolute/path/from/project/file:row:column
+    const filename = frame.trimLeft().split(' ')[2].replace(process.cwd(), '').replace(/\(|\)/g, '');
+
     // const functionName = frame.split(' ')[5];
     // return `${filename}:${functionName.startsWith('/') ? '' : functionName}`;
     return filename;
