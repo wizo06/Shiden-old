@@ -19,12 +19,12 @@ module.exports = Encoder = {
         const tempPath = await Temp.getTempFolderPath();
 
         const fileName = path.basename(payload.full_path);
-        const ext = fileName.match(/\.(\w|\d)+$/) ? fileName.match(/\.(\w|\d)+$/)[0] : '.mkv';
+        const ext = path.extname(fileName);
         const originalFile = path.join(tempPath, fileName);
         const tempFile = path.join(tempPath, `temp${ext}`);
         const tempPreppedFile = path.join(tempPath, `temp_prepped${ext}`);
         const assFile = path.join(tempPath, `sub.ass`);
-        const outputFile = path.join(tempPath, fileName).replace(/\.(\w|\d)+$/, '.mp4');
+        const outputFile = path.join(tempPath, fileName).replace(ext, '.mp4');
 
         // Rename payload file to temp
         Logger.info(`Renaming file to ${path.basename(tempFile)}`);

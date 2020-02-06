@@ -12,8 +12,8 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - [GET](#GET)
     - [/queue](#queue)
   - [POST](#POST)
-    - [/encode](#encode)
-    - [/batch](#batch)
+    - [/hardsub/file](#hardsubfile)
+    - [/hardsub/folder](#hardsubfolder)
 
 # Features
 - Queue system. First come first serve basis.
@@ -77,7 +77,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 
 ## POST
 
-### `/encode`
+### `/hardsub/file`
   - Queue up **one file**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
@@ -101,7 +101,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | sub_index | No | Stream index number that will be used for subtitle |
 
 
-### `/batch`
+### `/hardsub/folder`
   - Queue up **all files of a folder**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)

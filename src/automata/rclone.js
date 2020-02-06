@@ -73,7 +73,8 @@ module.exports = Rclone = {
         const payload = await Queue.getFirst();
         const tempPath = await Temp.getTempFolderPath();
         const fileName = path.basename(payload.full_path);
-        const source = path.join(tempPath, fileName).replace(/\.(\w|\d)+$/, '.mp4');
+        const ext = path.extname(fileName);
+        const source = path.join(tempPath, fileName).replace(ext, '.mp4');
 
         const fullPathNoFile = Paths.parseHardsubPath(payload.full_path, fileName);
 

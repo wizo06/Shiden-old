@@ -1,6 +1,6 @@
 {
-  "name": "Shiden",
-  "version": "3.1.0",
+  "name": "shiden",
+  "version": "3.2.0",
   "description": "",
   "main": "src/server.js",
   "scripts": {
