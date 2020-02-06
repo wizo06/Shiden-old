@@ -10,10 +10,12 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - [Start up Shiden](#start-up-shiden)
 - [Usage](#usage)
   - [GET](#GET)
-    - [/queue](#queue)
+    - /queue
   - [POST](#POST)
-    - [/hardsub/file](#hardsubfile)
-    - [/hardsub/folder](#hardsubfolder)
+    - /hardsub/file
+    - /hardsub/folder
+  - [DELETE](#DELETE)
+    - /queue
 
 # Features
 - Queue system. First come first serve basis.
@@ -123,3 +125,44 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
+
+## DELETE
+
+### `/queue`
+  - Delete **all payloads** in the queue that **matches the provided string**
+  - `Content-Type` must be `application/json`
+  - `Authentication` must have a valid token (from `user_auth.yml`)
+  - The JSON in the body should look like this
+  ```json
+  {
+      "full_path": "string used for matching"
+  }
+  ```
+Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes) is used. For example, if the queue has the following payloads:
+```json
+[
+  {
+    "show": "...",
+    "full_path": "Grand Blue/Grand Blue - 01 [1080p].mkv"
+  },
+  {
+    "show": "...",
+    "full_path": "Grand Blue/Grand Blue - 02 [1080p].mkv"
+  },
+  {
+    "show": "...",
+    "full_path": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
+  }
+]
+```
+and your request looks like this:
+```json
+{
+  "full_path": "Blue"
+}
+```
+it will delete these two payloads from the queue:
+```
+Grand Blue - 01 [1080p].mkv
+Grand Blue - 02 [1080p].mkv
+```

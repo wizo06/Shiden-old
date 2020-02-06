@@ -31,4 +31,14 @@ module.exports = Promisefied = {
     });
   },
 
+  jsonParse: string => {
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(JSON.parse(string));
+      }
+      catch (e) {
+        reject(e.stack.split('\n')[0]);
+      }
+    });
+  },
 };

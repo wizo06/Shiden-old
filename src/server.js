@@ -23,6 +23,7 @@ const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD
 // Import routes
 const hardsubFilePost = require(path.join(process.cwd(), 'src/routes/hardsub/file/post.js'));
 const hardsubFolderPost = require(path.join(process.cwd(), 'src/routes/hardsub/folder/post.js'));
+const queueDelete = require(path.join(process.cwd(), 'src/routes/queue/delete.js'));
 const queueGet = require(path.join(process.cwd(), 'src/routes/queue/get.js'));
 const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
 
@@ -32,12 +33,16 @@ const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
 // Create ExpressJS app
 const app = express();
 
-app.use(express.json());
+// Use "express.text()" to parse incoming requests payload as a plain string
+// This allows us to handle the "JSON.parse()" on our own and wrap it around a "try..catch" block
+// And supress the ugly error message if the payload has incorrect JSON syntax
+app.use(express.text({ type: 'application/json' }));
 
 // Define routes
-app.use(queueGet);
 app.use(hardsubFilePost);
 app.use(hardsubFolderPost);
+app.use(queueDelete);
+app.use(queueGet);
 app.use(catchAll);
 
 app.listen(CONFIG.express.port, async () => {
