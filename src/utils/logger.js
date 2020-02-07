@@ -41,35 +41,39 @@ module.exports = Logger = {
     // const filename = path.basename(frame).split(':')[0];
 
     // filename:row:column
-    // const filename = path.basename(frame).replace(')', '');
+    const filename = path.basename(frame).replace(')', '');
 
     // /absolute/path/from/project/file:row:column
-    const filename = frame.trimLeft().split(' ')[2].replace(process.cwd(), '').replace(/\(|\)/g, '');
+    // const filename = frame.trimLeft().split(' ')[2].replace(process.cwd(), '').replace(/\(|\)/g, '');
 
     // const functionName = frame.split(' ')[5];
     // return `${filename}:${functionName.startsWith('/') ? '' : functionName}`;
     return filename;
   },
 
-  info: (data, color = '') => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][INFO]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+  success: (data, color = Logger.Colors.Bright + Logger.Colors.FgGreen) => {
+    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][SUCCESS]: [${Logger.getCallingDetails()}]:${color}✔ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  },
+
+  info: (data, color = Logger.Colors.Bright + Logger.Colors.FgCyan) => {
+    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][INFO]: [${Logger.getCallingDetails()}]:${color}i ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   debug: (data, color = Logger.Colors.FgYellow) => {
     (master || verbosity) ? '' :
-      console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][DEBUG]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+      console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][DEBUG]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   warning: (data, color = Logger.Colors.Bright + Logger.Colors.FgYellow) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][WARNING]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][WARNING]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   error: (data, color = Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][ERROR]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][ERROR]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   critical: (data, color = Logger.Colors.Bright + Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][CRITICAL]: ${color}[${Logger.getCallingDetails()}]: ${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][CRITICAL]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
 };

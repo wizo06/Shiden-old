@@ -18,8 +18,8 @@ module.exports = router.delete(endpoint, async (req, res) => {
     const payload = await Promisefied.jsonParse(req.body);
     if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
 
-    Logger.info(`Loaded show: ${payload.show}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-    Logger.info(`Loaded full_path: ${payload.full_path}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+    Logger.info(`Loaded show: ${payload.show}`);
+    Logger.info(`Loaded full_path: ${payload.full_path}`);
 
     await Queue.removePayload(payload);
     return res.status(209).send('Payload deleted');

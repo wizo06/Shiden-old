@@ -30,9 +30,8 @@ module.exports = Rclone = {
 
         source = Paths.parseRclonePaths(source, payload.full_path);
 
-        command = `${Paths.rclonePath} lsf "${source}" --files-only ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
-        response = await Promisefied.exec(command);
-        Logger.debug(response);
+        const command = `${Paths.rclonePath} lsf "${source}" --files-only ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
+        await Promisefied.exec(command);
         resolve(true);
       }
       catch (e) {
@@ -53,7 +52,7 @@ module.exports = Rclone = {
         let validSource = false;
         for (src of remote.downloadSource) {
           if (await Rclone.checkEpisodeExists(src, payload)) {
-            Logger.info(`Found file in ${src}`, Logger.Colors.FgGreen);
+            Logger.success(`Found file in ${src}`);
             validSource = src;
             break;
           }
@@ -72,7 +71,7 @@ module.exports = Rclone = {
         Logger.info(`Downloading ${source}`);
         const command = `${Paths.rclonePath} copy "${source}" "${destination}" ${flags.rclone}`;
         await Promisefied.exec(command);
-        Logger.info(`Download completed`, Logger.Colors.FgGreen);
+        Logger.success(`Download completed`);
         resolve();
       }
       catch (e) {
@@ -90,20 +89,24 @@ module.exports = Rclone = {
     return new Promise(async (resolve, reject) => {
       try {
         const payload = await Queue.getFirst();
+        Logger.debug(1);
         const tempPath = await Temp.getTempFolderPath();
+        Logger.debug(2);
         const fileName = path.basename(payload.full_path);
+        Logger.debug(3);
         const ext = path.extname(fileName);
+        Logger.debug(4);
         const source = path.join(tempPath, fileName).replace(ext, '.mp4');
-
+        Logger.debug(5);
         const fullPathNoFile = Paths.parseHardsubPath(payload.full_path);
-
+        Logger.debug(6);
         for (dest of remote.uploadDestination) {
           const destination = Paths.parseRclonePaths(dest, fullPathNoFile);
           Logger.info(`Uploading to ${destination}`);
 
           const command = `${Paths.rclonePath} copy "${source}" "${destination}" ${flags.rclone}`;
           await Promisefied.exec(command);
-          Logger.info(`Upload completed`, Logger.Colors.FgGreen);
+          Logger.success(`Upload completed`);
         }
         resolve();
       }
@@ -125,7 +128,7 @@ module.exports = Rclone = {
         let validSource = false;
         for (src of remote.downloadSource) {
           if (await Rclone.checkFolderExists(src, payload)) {
-            Logger.info(`Found folder in ${src}`, Logger.Colors.FgGreen);
+            Logger.info(`Found folder in ${src}`);
             validSource = src;
             break;
           }
@@ -171,8 +174,7 @@ module.exports = Rclone = {
         source = Paths.parseRclonePaths(source, fullPathNoLastFolder);
 
         command = `${Paths.rclonePath} lsf "${source}" --dirs-only --include "${lastFolder}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
-        response = await Promisefied.exec(command);
-        Logger.debug(`Folder found: ${response}`);
+        const response = await Promisefied.exec(command);
         if (response === '') resolve(false);
         else resolve(true);
       }

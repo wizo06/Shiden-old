@@ -24,8 +24,8 @@ module.exports = router.post(endpoint, async (req, res) => {
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded show: ${payload.show}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-    Logger.info(`Loaded full_path: ${payload.full_path}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+    Logger.info(`Loaded show: ${payload.show}`);
+    Logger.info(`Loaded full_path: ${payload.full_path}`);
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
 
@@ -36,7 +36,7 @@ module.exports = router.post(endpoint, async (req, res) => {
 
     if (await Queue.isEmpty()) {
       for (episode of arrOfEpisodes) {
-        Logger.info(`Loaded episode: ${episode}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+        Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
           full_path: path.join(payload.full_path, episode),
@@ -50,7 +50,7 @@ module.exports = router.post(endpoint, async (req, res) => {
     }
     else {
       for (episode of arrOfEpisodes) {
-        Logger.info(`Loaded episode: ${episode}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+        Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
           full_path: path.join(payload.full_path, episode),

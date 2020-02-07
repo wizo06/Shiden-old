@@ -47,7 +47,7 @@ app.use(catchAll);
 
 app.listen(CONFIG.express.port, async () => {
   if (!master) Logger.warning(`Running on DEV mode`);
-  Logger.info(`Running on http://localhost:${CONFIG.express.port}/`, Logger.Colors.FgGreen);
+  Logger.info(`Running on http://localhost:${CONFIG.express.port}/`);
 
   try {
     // If statement block for Discord bot

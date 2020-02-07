@@ -104,7 +104,7 @@ const sendToWebhook = (anilistResponse, kitsuResponse, status, payload) => {
 
         Logger.info(`Sending request to ${url}`);
         const response = await Promisefied.request(options);
-        if (response.res.statusCode === 204) Logger.info(`Successful sent with return of ${response.res.statusCode}`);
+        if (response.res.statusCode === 204) Logger.success(`Successful sent with return of ${response.res.statusCode}`);
         else {
           Logger.debug(response.res.statusCode);
           Logger.debug(util.inspect(response.body));

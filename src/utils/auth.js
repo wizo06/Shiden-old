@@ -17,7 +17,6 @@ const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD
 module.exports = Auth = {
   authorize: tokenFromRequest => {
     try {
-      // if (!master) Logger.warning(`Running on DEV mode`);
       let authPath;
       if (master) authPath = path.join(process.cwd(), 'conf/user_auth.yml');
       else authPath = path.join(process.cwd(), 'conf/dev_auth.yml');
