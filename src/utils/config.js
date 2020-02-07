@@ -1,3 +1,8 @@
+/**
+ * @module config
+ * This module handles loading config file
+ */
+
 // Import node modules
 const path = require('path');
 const fs = require('fs');

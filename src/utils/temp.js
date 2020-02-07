@@ -1,3 +1,8 @@
+/**
+ * @module temp
+ * This module handles the "temp" folder
+ */
+
 // Import node modules
 const fs = require('fs');
 const path = require('path');
@@ -7,6 +12,9 @@ const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 
 module.exports = Temp = {
+  /**
+   * @return {{string}} - Returns a string with the absolute path to the "temp" folder
+   */
   getTempFolderPath: () => {
     return new Promise((resolve, reject) => {
       if (!fs.existsSync(Paths.tempFolder)) {
@@ -17,16 +25,10 @@ module.exports = Temp = {
     });
   },
 
-  getPlexTempFolderPath: () => {
-    return new Promise((resolve, reject) => {
-      if (!fs.existsSync(Paths.plexTempFolder)) {
-        Logger.debug(`Creating plextemp/`);
-        fs.mkdirSync(Paths.plexTempFolder, { recursive: true });
-      }
-      resolve(Paths.plexTempFolder);
-    });
-  },
-
+  /**
+   * Delete all files in "temp" folder with fs.unlinkSync()
+   * @return {{void}}
+   */
   destroy: () => {
     return new Promise(async (resolve, reject) => {
       try {

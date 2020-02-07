@@ -1,3 +1,8 @@
+/**
+ * @module rclone
+ * This module handles the execution of Rclone commands
+ */
+
 // Import node modules
 const path = require('path');
 require('toml-require').install({ toml: require('toml') });
@@ -12,6 +17,12 @@ const { remote } = require(path.join(process.cwd(), 'src/utils/config.js'));
 const { flags } = require(path.join(process.cwd(), 'src/utils/config.js'));
 
 module.exports = Rclone = {
+  /**
+   * Check if a file exist in a remote storage
+   * @param {{string}} source - remote storage name from rclone config
+   * @param {{Object}} payload - Incoming payload in JSON format
+   * @return {{boolean}}
+   */
   checkEpisodeExists: (source, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -31,6 +42,10 @@ module.exports = Rclone = {
     });
   },
 
+  /**
+   * Downloads the file from remote to temp folder
+   * @return {{void}}
+   */
   download: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -67,6 +82,10 @@ module.exports = Rclone = {
     });
   },
 
+  /**
+   * Uploads the file from temp folder to remote
+   * @return {{void}}
+   */
   upload: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -76,7 +95,7 @@ module.exports = Rclone = {
         const ext = path.extname(fileName);
         const source = path.join(tempPath, fileName).replace(ext, '.mp4');
 
-        const fullPathNoFile = Paths.parseHardsubPath(payload.full_path, fileName);
+        const fullPathNoFile = Paths.parseHardsubPath(payload.full_path);
 
         for (dest of remote.uploadDestination) {
           const destination = Paths.parseRclonePaths(dest, fullPathNoFile);
@@ -95,6 +114,11 @@ module.exports = Rclone = {
     });
   },
 
+  /**
+   * Get the list of episodes of a folder and return them in an array
+   * @param {{Object}} payload - Incoming payload in JSON format
+   * @return {{Array}} - Returns an array of episodes of a folder
+   */
   getListOfEpisodes: payload => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -130,6 +154,12 @@ module.exports = Rclone = {
     });
   },
 
+  /**
+   * Check if a folder exist in a remote storage
+   * @param {{string}} source - remote storage name from rclone config
+   * @param {{Object}} payload - Incoming payload in JSON format
+   * @return {{boolean}}
+   */
   checkFolderExists: (source, payload) => {
     return new Promise(async (resolve, reject) => {
       try {

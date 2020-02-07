@@ -1,3 +1,8 @@
+/**
+ * @module queue
+ * This module handles the queue
+ */
+
 // Import node modules
 const fs = require('fs');
 const path = require('path');
@@ -8,6 +13,10 @@ const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 
 module.exports = Queue = {
+  /**
+   * Gets the absolute path of the queue file and returns it in a resolve() or reject()
+   * @return {{string}} - Returns a string with the absolute path of the queue file
+   */
   getFilePath: () => {
     return new Promise(async (resolve, reject) => {
       if (fs.existsSync(Paths.queueFile)) resolve(Paths.queueFile);
@@ -15,15 +24,30 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Read the content of the queue file and returns it in JSON format
+   * @param {{string}} queueFilePath - The absolute path to the queue file
+   * @return {{Object}} - Returns the current queue in JSON format
+   */
   readFile: queueFilePath => {
     const data = fs.readFileSync(queueFilePath, { encoding: 'utf8' });
     return JSON.parse(data);
   },
 
+  /**
+   * Write to queue file
+   * @param {{string}} queueFilePath
+   * @param {{Object}} data
+   */
   writeFile: (queueFilePath, data) => {
     fs.writeFileSync(queueFilePath, JSON.stringify(data), { encoding: 'utf8' });
   },
 
+  /**
+   * Check if incoming payload is already in queue and returns a boolean
+   * @param {{Object}} payload - The incoming payload in JSON format
+   * @return {{boolean}}
+   */
   includes: payload => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -47,6 +71,11 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Append incoming payload to the queue
+   * @param {{Object}} payload - Incoming payload in JSON format
+   * @return {{void}}
+   */
   push: payload => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -67,6 +96,10 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Get the first element in the queue and returns it
+   * @return {{Object}} - Returns the first element in the queue in JSON format
+   */
   getFirst: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -81,6 +114,10 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Remove the first element in the queue
+   * @return {{void}}
+   */
   shift: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -98,6 +135,10 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Check if queue is empty or not and returns a boolean
+   * @return {{boolean}}
+   */
   isEmpty: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -119,6 +160,10 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Get the entire queue and returns it in an array
+   * @return {{Array}}
+   */
   get: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -133,6 +178,10 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Remove the queue file itself
+   * @return {{void}}
+   */
   removeFile: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -148,6 +197,11 @@ module.exports = Queue = {
     });
   },
 
+  /**
+   * Remove all payloads that matches a substring
+   * @param {{Object}} payload - Incoming payload with the substring used to match elements in the queue
+   * @return {{void}}
+   */
   removePayload: payload => {
     return new Promise(async (resolve, reject) => {
       try {

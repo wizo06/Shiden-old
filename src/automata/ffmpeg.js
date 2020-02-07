@@ -1,5 +1,6 @@
 /**
- * @fileoverview
+ * @module ffmpeg
+ * This module handles the execution of FFmpeg commands
  */
 
 // Import node modules
@@ -17,6 +18,14 @@ const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
 module.exports = Ffmpeg = {
+  /**
+   * Extract video and audio streams into temp_prepped
+   * @param {{string}} tempFile - Path to temp file
+   * @param {{string}} tempPreppedFile - Path to temp_prepped file
+   * @param {{Array}} streams - Array of streams from temp file, extracted with FFprobe
+   * @param {{Object}} payload - Incoming payload in JSON format
+   * @return {{void}}
+   */
   prepare: (tempFile, tempPreppedFile, streams, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -38,6 +47,12 @@ module.exports = Ffmpeg = {
     });
   },
 
+  /**
+   * Change container of file into without transcoding
+   * @param {{string}} tempPreppedFile - Path to temp_prepped file
+   * @param {{string}} outputFile - Path to output file
+   * @return {{void}}
+   */
   changeContainer: (tempPreppedFile, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -58,6 +73,13 @@ module.exports = Ffmpeg = {
     });
   },
 
+  /**
+   * Extract subtitle stream from temp file into an ass file
+   * @param {{string}} tempFile - Path to temp file
+   * @param {{number}} index - Index of the subtitle stream
+   * @param {{string}} assFile - Path to ass file
+   * @return {{void}}
+   */
   extractSubFile: (tempFile, index, assFile) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -75,6 +97,14 @@ module.exports = Ffmpeg = {
     });
   },
 
+  /**
+   * Hardsub tempPreppedFile with assFile while forcing fontstyle inside assetsFolder
+   * @param {{string}} tempPreppedFile - Path to temp_prepped file
+   * @param {{string}} assFile - Path to ass file
+   * @param {{string}} assetsFolder - Path to assets folder
+   * @param {{string}} outputFile - Path to output file
+   * @return {{void}}
+   */
   hardsubText: (tempPreppedFile, assFile, assetsFolder, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -95,6 +125,14 @@ module.exports = Ffmpeg = {
     });
   },
 
+  /**
+   * Hardsub tempPreppedFile with bitmap based subtitle stream
+   * @param {{string}} tempPreppedFile - Path to temp_prepped file
+   * @param {{string}} tempFile - Path to temp file
+   * @param {{number}} index - Index of the subtitle stream
+   * @param {{string}} outputFile - Path to output file
+   * @return {{void}}
+   */
   hardsubBitmap: (tempPreppedFile, tempFile, index, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {

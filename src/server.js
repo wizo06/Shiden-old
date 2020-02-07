@@ -50,7 +50,7 @@ app.listen(CONFIG.express.port, async () => {
   Logger.info(`Running on http://localhost:${CONFIG.express.port}/`, Logger.Colors.FgGreen);
 
   try {
-    // If block for Discord bot
+    // If statement block for Discord bot
     if (CONFIG.discord_bot.token) {
       try {
         await DISCORD_BOT.login(CONFIG.discord_bot.token);
@@ -66,7 +66,7 @@ app.listen(CONFIG.express.port, async () => {
     // If "--clean" flag is passed, remove queue file
     if (process.argv.slice(2).includes('--clean')) await Queue.removeFile();
 
-    // Start processing payloads in queue if there are any leftovers
+    // Start processing payloads in queue if there are leftovers
     if (!(await Queue.isEmpty())) processNextPayload();
   }
   catch (e) {

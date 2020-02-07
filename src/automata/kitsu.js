@@ -1,3 +1,8 @@
+/**
+ * @module kitsu
+ * This module handles requests to Kitsu
+ */
+
 // Import node modules
 const path = require('path');
 

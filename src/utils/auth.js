@@ -1,3 +1,8 @@
+/**
+ * @module auth
+ * This module handles loading auth file
+ */
+
 // Import node modules
 const path = require('path');
 const yaml = require('js-yaml');

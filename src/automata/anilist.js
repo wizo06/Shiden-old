@@ -1,3 +1,8 @@
+/**
+ * @module anilist
+ * This module handles requests to Anilist GraphQL endpoints
+ */
+
 // Import node modules
 const path = require('path');
 

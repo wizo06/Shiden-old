@@ -1,3 +1,8 @@
+/**
+ * @module logger
+ * This module simply prepend a timestamp and filename to console.log()
+ */
+
 // Import node modules
 const moment = require('moment');
 const fs = require('fs');

@@ -1,3 +1,9 @@
+/**
+ * @module promisefied
+ * This module simply transforms some functions that returns a callback
+ * into a function that returns a promise
+ */
+
 // Import node modules
 const path = require('path');
 const { exec } = require('child_process');

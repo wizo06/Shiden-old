@@ -1,3 +1,9 @@
+/**
+ * @module notification
+ * This module handles getting metadata of the show from Anilist
+ * and then sending notification to discord webhooks
+ */
+
 // Import node modules
 const path = require('path');
 const util = require('util');
@@ -34,8 +40,8 @@ const sendToWebhook = (anilistResponse, kitsuResponse, status, payload) => {
       const red = 16711680;
 
       // Links
-      const malUrl = 'https://myanimelist.net/anime/'+anilistResponse.idMal;
-      const kitsuUrl = 'https://kitsu.io/anime/'+kitsuResponse;
+      const malUrl = 'https://myanimelist.net/anime/' + anilistResponse.idMal;
+      const kitsuUrl = 'https://kitsu.io/anime/' + kitsuResponse;
 
       let links = [];
       if (anilistResponse.idMal) links.push(`[MAL](${malUrl})`);

@@ -1,4 +1,9 @@
 /**
+ * @module AnimeOfflineDatabase
+ * This module handles requests to AOD
+ */
+
+/**
  * https://github.com/BeeeQueue/arm-server
  * https://github.com/manami-project/anime-offline-database/
  */

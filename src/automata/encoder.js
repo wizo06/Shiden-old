@@ -1,3 +1,9 @@
+/**
+ * @module encoder
+ * This module handles the logic of choosing which FFmpeg command should be used
+ * for incoming files. It uses FFprobe to probe the info of the file.
+ */
+
 // Import node modules
 const fs = require('fs');
 const path = require('path');
@@ -26,39 +32,39 @@ module.exports = Encoder = {
         const assFile = path.join(tempPath, `sub.ass`);
         const outputFile = path.join(tempPath, fileName).replace(ext, '.mp4');
 
-        // Rename payload file to temp
+        // Step 0: Rename file to temp
         Logger.info(`Renaming file to ${path.basename(tempFile)}`);
         fs.renameSync(originalFile, tempFile);
 
-        // ffprobe
+        // Step 1: FFprobe to extract info from file
         Logger.info(`[2/4] [1/3] Extracting streams info from ${path.basename(tempFile)}`, Logger.Colors.Bright);
         const streams = await Ffprobe.getStreams(tempFile);
 
-        // Prepare temp_prepped with only video and audio streams
+        // Step 2: Extract video and audio streams into temp_prepped
         Logger.info(`[2/4] [2/3] Preparing ${path.basename(tempFile)}`, Logger.Colors.Bright);
         await Ffmpeg.prepare(tempFile, tempPreppedFile, streams, payload);
 
-        // If no subtitle stream
+        // Step 3: Check if original file has subtitle streams
         if (!Ffprobe.hasSub(streams)) {
-          // Simply change container
+          // Step 4: If no subtitle stream, simply change container
           Logger.info(`[2/4] [3/3] Changing container`, Logger.Colors.Bright);
           await Ffmpeg.changeContainer(tempPreppedFile, outputFile);
         }
-        // If subtitle stream exists
         else {
+          // Step 4: If subtitle stream exists, check if it's text based or bitmap based
           const subStream = Ffprobe.getSubStream(streams, payload);
-          // If it is text based
           switch (subStream.codecBase) {
             case 'text':
-              // Extract sub file
+              // Step 4.1: If it is text based, extract subtitle stream into sub.ass
               Logger.info(`[2/4] [3/4] Extracting subtitle file`, Logger.Colors.Bright);
               await Ffmpeg.extractSubFile(tempFile, subStream.index, assFile);
-              // -vf subtitles=sub.ass
+
+              // Step 4.2: Hardsub temp_prepped with -vf subtitles=sub.ass
               Logger.info(`[2/4] [4/4] Hardsubbing with text based subtitle`, Logger.Colors.Bright);
               await Ffmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
               break;
             case 'bitmap':
-              // -filter_complex overlay
+              // Step 4.1: Hardsub temp_prepped with -filter_complex overlay
               Logger.info(`[2/4] [3/3] Hardsubbing with bitmap based subtitle`, Logger.Colors.Bright);
               await Ffmpeg.hardsubBitmap(tempPreppedFile, tempFile, subStream.index, outputFile);
               break;
@@ -66,7 +72,6 @@ module.exports = Encoder = {
               Logger.error(`Something went wrong. Subtitle stream detected but couldn't be used.`);
               reject(4);
               return;
-              break;
           }
         }
 
