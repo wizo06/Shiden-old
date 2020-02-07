@@ -129,7 +129,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 ## DELETE
 
 ### `/queue`
-  - Delete **all payloads** in the queue that **matches the provided string**
+  - Delete **all payloads** in the queue that **matches the provided string** **EXCEPT** if the payload is **first element in queue**
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
   - The JSON in the body should look like this
@@ -143,15 +143,19 @@ Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-U
 [
   {
     "show": "...",
+    "full_path": "Grand Blue/Grand Blue - 03 [1080p].mkv"
+  },
+  {
+    "show": "...",
     "full_path": "Grand Blue/Grand Blue - 01 [1080p].mkv"
   },
   {
     "show": "...",
-    "full_path": "Grand Blue/Grand Blue - 02 [1080p].mkv"
+    "full_path": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
   },
   {
     "show": "...",
-    "full_path": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
+    "full_path": "Grand Blue/Grand Blue - 02 [1080p].mkv"
   }
 ]
 ```
@@ -166,3 +170,4 @@ it will delete these two payloads from the queue:
 Grand Blue - 01 [1080p].mkv
 Grand Blue - 02 [1080p].mkv
 ```
+**NOTE** that `Grand Blue - 03 [1080p].mkv` will not be deleted in this case because it is the first element in the queue.
