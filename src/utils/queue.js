@@ -153,8 +153,17 @@ module.exports = Queue = {
       try {
         const queueFilePath = await Queue.getFilePath();
         const queue = Queue.readFile(queueFilePath);
-        const filtered = queue.filter(queueItem => !queueItem.full_path.includes(payload.full_path));
+        const filtered = queue.filter((queueItem, index) => {
+          const queueItemIsFirstElement = index === 0;
+          const queueItemDoesNotContainSustring = !queueItem.full_path.includes(payload.full_path);
+          if (queueItemIsFirstElement || queueItemDoesNotContainSustring) {
+            return true; // Return true if item is first element OR does not match substring
+          }
+          else return false;
+        });
 
+        // If the filtered array has the same length as the original queue array
+        // then it means no payload was removed.
         if (filtered.length === queue.length) return reject('Payload not found');
         Queue.writeFile(queueFilePath, filtered);
         resolve();
