@@ -59,13 +59,13 @@ module.exports = Queue = {
           resolve(true);
         }
         else {
-          Logger.info(`New request accepted`, Logger.Colors.Bright + Logger.Colors.FgGreen);
+          Logger.info(`New request accepted`);
           resolve(false);
         }
       }
       catch (e) {
         Logger.debug('Queue file does not exist. Incoming payload is not a duplicate.');
-        Logger.info(`New request accepted`, Logger.Colors.Bright + Logger.Colors.FgGreen);
+        Logger.info(`New request accepted`);
         resolve(false);
       }
     });

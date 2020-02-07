@@ -36,7 +36,7 @@ module.exports = Paths = {
    */
   parseHardsubPath: fullPath => {
     // Remove fileName from path
-    const fileName = path.basename(payload.full_path);
+    const fileName = path.basename(fullPath);
     let fullPathNoFile = fullPath.replace(fileName, '');
 
     // Append the string '[Hardsub]' to the topmost folder

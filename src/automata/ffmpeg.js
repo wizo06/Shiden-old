@@ -29,7 +29,6 @@ module.exports = Ffmpeg = {
   prepare: (tempFile, tempPreppedFile, streams, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!master) Logger.warning(`Running on DEV mode`);
         let command = [`${Paths.ffmpegPath} -i "${tempFile}"`];
         command.push(await Ffprobe.getVideoFlags(streams, payload));
         command.push(await Ffprobe.getAudioFlags(streams, payload));
@@ -37,7 +36,7 @@ module.exports = Ffmpeg = {
         command.push(`"${tempPreppedFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);
-        Logger.info(`File has been prepared in ${path.basename(tempPreppedFile)}`, Logger.Colors.Bright);
+        Logger.info(`File has been prepared in ${path.basename(tempPreppedFile)}`);
         resolve();
       }
       catch (e) {
@@ -56,7 +55,6 @@ module.exports = Ffmpeg = {
   changeContainer: (tempPreppedFile, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!master) Logger.warning(`Running on DEV mode`);
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}"`];
         command.push(`-c copy`);
         command.push(`-strict -2 -y`);
@@ -108,7 +106,6 @@ module.exports = Ffmpeg = {
   hardsubText: (tempPreppedFile, assFile, assetsFolder, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!master) Logger.warning(`Running on DEV mode`);
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}"`];
         command.push(`-vf subtitles=${assFile}:force_style='FontName=NotoSansJP-Medium:fontsdir=${assetsFolder}'`);
         command.push(`-strict -2 -y`);
@@ -136,10 +133,10 @@ module.exports = Ffmpeg = {
   hardsubBitmap: (tempPreppedFile, tempFile, index, outputFile) => {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!master) Logger.warning(`Running on DEV mode`);
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}" -i "${tempFile}"`];
         command.push(`-filter_complex "[0:v][1:${index}]overlay[v]"`);
         command.push(`-map "[v]"`);
+        command.push(`-map 0:a -acodec aac -ab 320k`);
         command.push(`-strict -2 -y`);
         command.push(master ? '' : '-t 30');
         command.push(`"${outputFile}"`);

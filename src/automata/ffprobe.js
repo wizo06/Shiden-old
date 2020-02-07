@@ -198,7 +198,7 @@ module.exports = Ffprobe = {
     }
 
     if (!preferredFound) {
-      Logger.info(`Preferred subtitle language not found. Looking for first available text based subtitle stream.`, Logger.Colors.Bright);
+      Logger.info(`Preferred subtitle language not found. Looking for first available text based subtitle stream.`);
 
       const textSubStream = streams.filter(stream => stream.codec_name === 'srt' || stream.codec_name === 'ass')[0];
       if (textSubStream) {

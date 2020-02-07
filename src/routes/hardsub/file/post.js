@@ -24,8 +24,8 @@ module.exports = router.post(endpoint, async (req, res) => {
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded show: ${payload.show}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
-    Logger.info(`Loaded episode: ${path.basename(payload.full_path)}`, Logger.Colors.Bright + Logger.Colors.FgMagenta);
+    Logger.info(`Loaded show: ${payload.show}`);
+    Logger.info(`Loaded episode: ${path.basename(payload.full_path)}`);
 
     if (await Queue.isEmpty()) {
       await Queue.push(payload);
