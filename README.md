@@ -19,7 +19,6 @@ It downloads from and uploads to remote/local storages using **rclone**.
 
 # Features
 - Queue system. First come first serve basis.
-- Prevention of duplicate payloads in queue. (only works for `/encode` endpoint)
 - HTTP response with the appropriate error status code and message.
 - Able to process the following scenarios:
   - Videos that don't have subtitle stream: Simply change container to MP4

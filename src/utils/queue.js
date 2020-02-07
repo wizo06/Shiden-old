@@ -44,34 +44,6 @@ module.exports = Queue = {
   },
 
   /**
-   * Check if incoming payload is already in queue and returns a boolean
-   * @param {{Object}} payload - The incoming payload in JSON format
-   * @return {{boolean}}
-   */
-  includes: payload => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const queueFilePath = await Queue.getFilePath();
-        const queue = Queue.readFile(queueFilePath);
-        const filtered = queue.filter(queueItem => queueItem.full_path === payload.full_path)[0];
-        if (filtered) {
-          Logger.debug(`New request denied: ${payload.full_path} is in queue already`);
-          resolve(true);
-        }
-        else {
-          Logger.info(`New request accepted`);
-          resolve(false);
-        }
-      }
-      catch (e) {
-        Logger.debug('Queue file does not exist. Incoming payload is not a duplicate.');
-        Logger.info(`New request accepted`);
-        resolve(false);
-      }
-    });
-  },
-
-  /**
    * Append incoming payload to the queue
    * @param {{Object}} payload - Incoming payload in JSON format
    * @return {{void}}
