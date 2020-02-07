@@ -20,7 +20,6 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
     if (!(payload.show && payload.full_path)) return res.status(400).send('JSON body must have "show" and "full_path"');
-    if (await Queue.includes(payload)) return res.status(409).send('Payload is in queue already');
 
     res.status(209).send('Payload accepted');
 

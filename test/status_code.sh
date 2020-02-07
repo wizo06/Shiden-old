@@ -91,20 +91,6 @@ else
   _error "209 not returned"
 fi
 
-sleep 1
-
-_info "POST /hardsub/file + Duplicate"
-http_status_code=$(curl -i -s -X POST \
-  -H "Authorization: authorization_key_1" \
-  -H "Content-Type: application/json" \
-  -d '{ "show": "Fate Kaleid", "full_path": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
-  http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
-if [ "${http_status_code}" == "409" ]; then
-  _success "409 returned"
-else
-  _error "409 not returned"
-fi
-
 _info "POST /hardsub/folder"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
