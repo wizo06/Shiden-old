@@ -6,6 +6,7 @@ const router = new express.Router();
 // Import custom modules
 const Auth = require(path.join(process.cwd(), 'src/utils/auth.js'));
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
+const Notification = require(path.join(process.cwd(), 'src/automata/notification.js'));
 const Rclone = require(path.join(process.cwd(), 'src/automata/rclone.js'));
 const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
@@ -20,11 +21,10 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.show && payload.full_path)) return res.status(400).send('JSON body must have "show" and "full_path"');
+    if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded show: ${payload.show}`);
     Logger.info(`Loaded full_path: ${payload.full_path}`);
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
@@ -62,10 +62,15 @@ module.exports = router.post(endpoint, async (req, res) => {
       }
     }
   }
-  catch (e) {
-    Logger.error(e);
-
-    if (e.includes('SyntaxError')) return res.status(400).send(e);
+  catch (status) {
+    Logger.error(status);
+    if (status === 6) {
+      Logger.error(`Exit code: ${status}`);
+      Logger.info('[4/4] Sending notifications...');
+      Notification.notification(status);
+      return;
+    }
+    if (status.includes('SyntaxError')) return res.status(400).send(status);
     else return res.status(500).send('Unknown error');
   }
 });

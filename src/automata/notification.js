@@ -85,6 +85,9 @@ const sendToWebhook = (anilistResponse, kitsuResponse, status, payload) => {
             description: payload.full_path,
             timestamp: (new Date()).toISOString(),
             color: red,
+            image: {
+              url: 'https://firebasestorage.googleapis.com/v0/b/shiden-e263a.appspot.com/o/Untitled-1-01.png?alt=media&token=ca800898-a8a4-4544-b5c2-52158026753f',
+            },
             fields: [
               {
                 name: 'Type of failure',
@@ -124,9 +127,14 @@ const notification = status => {
     try {
       const payload = await Queue.getFirst();
 
-      const kitsuResponse = await Kitsu.query(payload.show);
-      const anilistResponse = await Anilist.query(payload.show);
-      await sendToWebhook(anilistResponse, kitsuResponse, status, payload);
+      if (payload.show) {
+        const kitsuResponse = await Kitsu.query(payload.show);
+        const anilistResponse = await Anilist.query(payload.show);
+        await sendToWebhook(anilistResponse, kitsuResponse, status, payload);
+      }
+      else {
+        await sendToWebhook(undefined, undefined, status, paylaod);
+      }
       resolve();
     }
     catch (e) {

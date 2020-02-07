@@ -19,7 +19,7 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.show && payload.full_path)) return res.status(400).send('JSON body must have "show" and "full_path"');
+    if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
 
     res.status(209).send('Payload accepted');
 
