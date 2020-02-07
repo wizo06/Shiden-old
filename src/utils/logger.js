@@ -40,8 +40,8 @@ module.exports = Logger = {
     // filename (no row, no clumn)
     // const filename = path.basename(frame).split(':')[0];
 
-    // filename:row:column
-    const filename = path.basename(frame).replace(')', '');
+    // filename:row
+    const filename = path.basename(frame).replace(')', '').split(':').slice(0, 2).join(':');
 
     // /absolute/path/from/project/file:row:column
     // const filename = frame.trimLeft().split(' ')[2].replace(process.cwd(), '').replace(/\(|\)/g, '');
@@ -52,28 +52,28 @@ module.exports = Logger = {
   },
 
   success: (data, color = Logger.Colors.Bright + Logger.Colors.FgGreen) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][SUCCESS]: [${Logger.getCallingDetails()}]:${color}✔ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][SUCCESS]: [${Logger.getCallingDetails()}]:${color}✔ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   info: (data, color = Logger.Colors.Bright + Logger.Colors.FgCyan) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][INFO]: [${Logger.getCallingDetails()}]:${color}i ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][INFO]: [${Logger.getCallingDetails()}]:${color}i ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   debug: (data, color = Logger.Colors.FgYellow) => {
     (master || verbosity) ? '' :
-      console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][DEBUG]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+      console.log(`[${moment().format('MMMDD|HH:mm:ss')}][DEBUG]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   warning: (data, color = Logger.Colors.Bright + Logger.Colors.FgYellow) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][WARNING]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][WARNING]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   error: (data, color = Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][ERROR]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][ERROR]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
   critical: (data, color = Logger.Colors.Bright + Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('ddd|MMMDD|HH:mm:ss|Z')}][CRITICAL]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][CRITICAL]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
   },
 
 };
