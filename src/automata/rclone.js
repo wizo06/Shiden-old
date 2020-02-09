@@ -123,7 +123,7 @@ module.exports = Rclone = {
         let validSource = false;
         for (src of remote.downloadSource) {
           if (await Rclone.checkFolderExists(src, payload)) {
-            Logger.info(`Found folder in ${src}`);
+            Logger.success(`Found folder in ${src}`);
             validSource = src;
             break;
           }

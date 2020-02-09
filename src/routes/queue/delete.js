@@ -18,7 +18,7 @@ module.exports = router.delete(endpoint, async (req, res) => {
     const payload = await Promisefied.jsonParse(req.body);
     if (!(payload.stringMatch)) return res.status(400).send('JSON body must have "stringMatch"');
 
-    Logger.info(`Loaded stringMatch: ${payload.stringMatch}`);
+    Logger.success(`Loaded stringMatch: ${payload.stringMatch}`);
 
     await Queue.removePayload(payload);
     return res.status(209).send('Payload deleted');

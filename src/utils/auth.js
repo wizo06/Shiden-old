@@ -20,10 +20,12 @@ module.exports = Auth = {
       let authPath;
       if (master) authPath = path.join(process.cwd(), 'conf/user_auth.yml');
       else authPath = path.join(process.cwd(), 'conf/dev_auth.yml');
-      const obj = yaml.safeLoad(fs.readFileSync(authPath, 'utf8'));
+      const authFile = yaml.safeLoad(fs.readFileSync(authPath, 'utf8'));
 
-      for (user in obj) {
-        if (obj[user] === tokenFromRequest) {
+      for ([user, token] of Object.entries(authFile)) {
+        console.log(`${user} ${token}`);
+        console.log(tokenFromRequest);
+        if (token === tokenFromRequest) {
           Logger.debug(`Request authorized`);
           Logger.debug(`Matching key was sent from ${user}`);
           return true;

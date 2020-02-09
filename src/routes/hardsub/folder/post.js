@@ -25,7 +25,7 @@ module.exports = router.post(endpoint, async (req, res) => {
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded folder: ${payload.folder}`);
+    Logger.success(`Loaded folder: ${payload.folder}`);
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
 
