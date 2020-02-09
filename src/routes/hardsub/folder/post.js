@@ -21,11 +21,11 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
+    if (!(payload.folder)) return res.status(400).send('JSON body must have "folder"');
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded full_path: ${payload.full_path}`);
+    Logger.info(`Loaded folder: ${payload.folder}`);
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
 
@@ -39,7 +39,7 @@ module.exports = router.post(endpoint, async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
-          full_path: path.join(payload.full_path, episode),
+          file: path.join(payload.folder, episode),
           video_index: payload.video_index,
           audio_index: payload.audio_index,
           sub_index: payload.sub_index,
@@ -53,7 +53,7 @@ module.exports = router.post(endpoint, async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
-          full_path: path.join(payload.full_path, episode),
+          folder: path.join(payload.folder, episode),
           video_index: payload.video_index,
           audio_index: payload.audio_index,
           sub_index: payload.sub_index,
@@ -67,7 +67,7 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (status === 6) {
       Logger.error(`Exit code: ${status}`);
       Logger.info('[4/4] Sending notifications...');
-      Notification.notification(status);
+      Notification.send(status);
       return;
     }
     if (status.includes('SyntaxError')) return res.status(400).send(status);

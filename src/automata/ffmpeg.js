@@ -32,7 +32,7 @@ module.exports = Ffmpeg = {
         let command = [`${Paths.ffmpegPath} -i "${tempFile}"`];
         command.push(await Ffprobe.getVideoFlags(streams, payload));
         command.push(await Ffprobe.getAudioFlags(streams, payload));
-        command.push(master ? '' : '-t 30');
+        command.push(master ? '' : '-t 120');
         command.push(`"${tempPreppedFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);
@@ -58,7 +58,7 @@ module.exports = Ffmpeg = {
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}"`];
         command.push(`-c copy`);
         command.push(`-strict -2 -y`);
-        command.push(master ? '' : '-t 30');
+        command.push(master ? '' : '-t 120');
         command.push(`"${outputFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);
@@ -109,7 +109,7 @@ module.exports = Ffmpeg = {
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}"`];
         command.push(`-vf subtitles=${assFile}:force_style='FontName=NotoSansJP-Medium:fontsdir=${assetsFolder}'`);
         command.push(`-strict -2 -y`);
-        command.push(master ? '' : '-t 30');
+        command.push(master ? '' : '-t 120');
         command.push(`"${outputFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);
@@ -138,7 +138,7 @@ module.exports = Ffmpeg = {
         command.push(`-map "[v]"`);
         command.push(`-map 0:a -acodec aac -ab 320k`);
         command.push(`-strict -2 -y`);
-        command.push(master ? '' : '-t 30');
+        command.push(master ? '' : '-t 120');
         command.push(`"${outputFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);

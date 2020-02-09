@@ -16,9 +16,9 @@ module.exports = router.delete(endpoint, async (req, res) => {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.full_path)) return res.status(400).send('JSON body must have "full_path"');
+    if (!(payload.stringMatch)) return res.status(400).send('JSON body must have "stringMatch"');
 
-    Logger.info(`Loaded full_path: ${payload.full_path}`);
+    Logger.info(`Loaded stringMatch: ${payload.stringMatch}`);
 
     await Queue.removePayload(payload);
     return res.status(209).send('Payload deleted');

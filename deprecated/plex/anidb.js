@@ -12,7 +12,7 @@ require('toml-require').install({ toml: require('toml') });
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
-const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/anime_offline_database.js'));
+const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/animeOfflineDatabase.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 const { remote } = require(path.join(process.cwd(), 'src/utils/config.js'));
 

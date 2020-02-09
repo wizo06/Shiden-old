@@ -14,6 +14,10 @@ const path = require('path');
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 
 module.exports = AnimeOfflineDatabase = {
+  /**
+   * @param {{string}} id - Anilist ID
+   * @return {{string}} - AniDB ID
+   */
   query: id => {
     return new Promise(async (resolve, reject) => {
       const options = {

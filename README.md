@@ -85,7 +85,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
   - The JSON in the body should look like this
   ```json
   {
-      "full_path": "Airing/SHOW NAME/SEASON 1/FILE NAME.MKV",
+      "file": "Airing/SHOW NAME/SEASON 1/FILE NAME.MKV",
       "show": "SHOW NAME",
       "video_index": 0,
       "audio_index": 1,
@@ -95,7 +95,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 
 | Field | Required | Description |
 | --- | --- | --- |
-| full_path | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
+| file | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
 | show | No | Used for metadata when sending out notifications |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
@@ -109,7 +109,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
   - The JSON in the body should look like this
   ```json
   {
-      "full_path": "Airing/SHOW NAME/SEASON 1",
+      "folder": "Airing/SHOW NAME/SEASON 1",
       "show": "SHOW NAME",
       "video_index": 0,
       "audio_index": 1,
@@ -119,7 +119,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 
 | Field | Required | Description |
 | --- | --- | --- |
-| full_path | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
+| folder | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
 | show | No | Used for metadata when sending out notifications |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
@@ -134,7 +134,7 @@ then `node src/server.js --clean` => `npm start -- --clean`.
   - The JSON in the body should look like this
   ```json
   {
-      "full_path": "string used for matching"
+      "stringMatch": "string used for matching"
   }
   ```
 Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes) is used. For example, if the queue has the following payloads:
@@ -142,26 +142,26 @@ Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-U
 [
   {
     "show": "...",
-    "full_path": "Grand Blue/Grand Blue - 03 [1080p].mkv"
+    "file": "Grand Blue/Grand Blue - 03 [1080p].mkv"
   },
   {
     "show": "...",
-    "full_path": "Grand Blue/Grand Blue - 01 [1080p].mkv"
+    "file": "Grand Blue/Grand Blue - 01 [1080p].mkv"
   },
   {
     "show": "...",
-    "full_path": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
+    "file": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
   },
   {
     "show": "...",
-    "full_path": "Grand Blue/Grand Blue - 02 [1080p].mkv"
+    "file": "Grand Blue/Grand Blue - 02 [1080p].mkv"
   }
 ]
 ```
 and your request looks like this:
 ```json
 {
-  "full_path": "Blue"
+  "stringMatch": "Blue"
 }
 ```
 it will delete these two payloads from the queue:

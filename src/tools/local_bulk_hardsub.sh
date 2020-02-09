@@ -18,5 +18,5 @@ cd "${TODO_PATH}/${SUIGEN_PATH}"
 echo -e "${FG_CYAN}Hardsubbing to Suigen${DEFAULT}"
 curl -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "'"${SHOW}"'", "full_path": "'"${SUIGEN_PATH}"'" }' \
+  -d '{ "show": "'"${SHOW}"'", "file": "'"${SUIGEN_PATH}"'" }' \
   -X POST http://localhost:64000/batch
