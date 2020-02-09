@@ -69,9 +69,22 @@ module.exports = Encoder = {
               await Ffmpeg.hardsubBitmap(tempPreppedFile, tempFile, subStream.index, outputFile);
               break;
             default:
-              Logger.error(`Something went wrong. Subtitle stream detected but couldn't be used.`);
-              reject(4);
-              return;
+              Logger.info(`Trying with text based hardsub`);
+              try {
+                await Ffmpeg.extractSubFile(tempFile, subStream.index, assFile);
+                await Ffmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
+              }
+              catch (e) {
+                try {
+                  Logger.info(`Trying with bitmap based hardsub`);
+                  await Ffmpeg.hardsubBitmap(tempPreppedFile, tempFile, subStream.index, outputFile);
+                }
+                catch (e) {
+                  reject(4);
+                  return;
+                }
+              }
+              break;
           }
         }
 

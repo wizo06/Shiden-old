@@ -153,7 +153,6 @@ module.exports = Ffprobe = {
     let preferredFound = false;
 
     for (lang of subtitle.language) {
-      Logger.debug(`Looking for subtitle stream with language ${lang}`);
       const textSubStream = streams.filter(stream => {
         if (stream.tags) {
           const textBasedCodec = (stream.codec_name === 'srt' || stream.codec_name === 'ass');
@@ -167,7 +166,7 @@ module.exports = Ffprobe = {
       if (textSubStream) {
         Logger.info(`Preferred subtitle stream found.`);
         Logger.info(`Codec: ${textSubStream.codec_name}`);
-        Logger.info(`Language: ${textSubStream.tags.language}`);
+        if (sub.tags) Logger.info(`Language: ${textSubStream.tags.language ? textSubStream.tags.language : textSubStream.tags.title}`);
         Logger.info(`Index: ${textSubStream.index}`);
         preferredFound = true;
         codecBase = 'text';
@@ -188,7 +187,7 @@ module.exports = Ffprobe = {
       if (bitmapSubStream) {
         Logger.info(`Preferred subtitle stream found.`);
         Logger.info(`Codec: ${bitmapSubStream.codec_name}`);
-        Logger.info(`Language: ${bitmapSubStream.tags.language}`);
+        if (sub.tags) Logger.info(`Language: ${bitmapSubStream.tags.language ? bitmapSubStream.tags.language : bitmapSubStream.tags.title}`);
         Logger.info(`Index: ${bitmapSubStream.index}`);
         preferredFound = true;
         codecBase = 'bitmap';
@@ -198,27 +197,12 @@ module.exports = Ffprobe = {
     }
 
     if (!preferredFound) {
-      Logger.info(`Preferred subtitle language not found. Looking for first available text based subtitle stream.`);
-
-      const textSubStream = streams.filter(stream => stream.codec_name === 'srt' || stream.codec_name === 'ass')[0];
-      if (textSubStream) {
-        Logger.info(`Text based subtitle stream found`);
-        Logger.info(`Codec: ${textSubStream.codec_name}`);
-        if (textSubStream.tags) Logger.info(`Language: ${textSubStream.tags.language}`);
-        Logger.info(`Index: ${textSubStream.index}`);
-        codecBase = 'text';
-        index = textSubStream.index;
-      }
-
-      const bitmapSubStream = streams.filter(stream => stream.codec_name === 'hdmv_pgs_subtitle')[0];
-      if (bitmapSubStream) {
-        Logger.info(`Bitmap based subtitle stream found`);
-        Logger.info(`Codec: ${bitmapSubStream.codec_name}`);
-        if (bitmapSubStream.tags) Logger.info(`Language: ${bitmapSubStream.tags.language}`);
-        Logger.info(`Index: ${bitmapSubStream.index}`);
-        codecBase = 'bitmap';
-        index = bitmapSubStream.index;
-      }
+      Logger.info(`Preferred subtitle language not found. Looking for first available subtitle stream.`);
+      const sub = streams.filter(stream => stream.codec_type === 'subtitle')[0];
+      Logger.info(`Codec: ${sub.codec_name}`);
+      if (sub.tags) Logger.info(`Language: ${sub.tags.language ? sub.tags.language : sub.tags.title}`);
+      Logger.info(`Index: ${sub.index}`);
+      index = sub.index;
     }
 
     return { codecBase, index };
