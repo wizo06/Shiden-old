@@ -46,7 +46,7 @@ module.exports = processNextPayload = async () => {
 
     // Step 4: Send notifications
     Logger.info('[4/4] Sending notifications...');
-    Notification.notification();
+    Notification.send();
 
     // Clean up
     await Temp.destroy();
@@ -55,12 +55,12 @@ module.exports = processNextPayload = async () => {
     if (!(await Queue.isEmpty())) processNextPayload();
     if (CONFIG.discord_bot.token) await DISCORD_BOT.user.setActivity('idle', { type: 'PLAYING' });
   }
-  catch (status) {
+  catch (statusCode) {
     try {
       // Skip to Step 4 if step 1, 2 or 3 failed
-      Logger.error(`Exit code: ${status}`);
+      Logger.error(`Exit code: ${statusCode}`);
       Logger.info('[4/4] Sending notifications...');
-      Notification.notification(status);
+      Notification.send(statusCode);
 
       // Clean up
       await Temp.destroy();

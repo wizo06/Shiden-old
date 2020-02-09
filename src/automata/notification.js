@@ -15,91 +15,136 @@ const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
 const Kitsu = require(path.join(process.cwd(), 'src/automata/kitsu.js'));
+const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/animeOfflineDatabase.js'));
 const { webhook } = require(path.join(process.cwd(), 'src/utils/config.js'));
 
-const sendToWebhook = (anilistResponse, kitsuResponse, status, payload) => {
+const send = statusCode => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (typeof anilistResponse === 'undefined') {
-        Logger.error(`Anilist response is undefined. Not sending notification.`);
-        return;
+      const payload = await Queue.getFirst();
+
+      if (payload.show) {
+        const anilistResponse = await Anilist.query(payload.show);
+        const kitsuResponse = await Kitsu.query(payload.show);
+        const aniDBID = await AnimeOfflineDatabase.query(anilistResponse.id);
+        const embed = buildEmbeds(anilistResponse, kitsuResponse, aniDBID, statusCode, payload);
+        await postToWebhook(statusCode, embed);
       }
+      else {
+        const embed = buildEmbeds(undefined, undefined, undefined, statusCode, payload);
+        await postToWebhook(statusCode, embed);
+      }
+      resolve();
+    }
+    catch (e) {
+      Logger.error(e);
+      resolve();
+    }
+  });
+};
 
-      let typeOfFailure = '';
-      if (status === 3) typeOfFailure = 'Download failed';
-      else if (status === 4) typeOfFailure = 'Hardsub failed';
-      else if (status === 5) typeOfFailure = 'Upload failed';
-      else if (status === 6) typeOfFailure = 'Folder not found';
-      else if (status === 7) typeOfFailure = 'Could not list files in folder';
+const buildEmbeds = (anilistResponse, kitsuResponse, aniDBID, statusCode, payload) => {
+  // Color
+  const purple = 8978687;
+  const red = 16711680;
 
-      // Description
-      const fileName = path.basename(payload.full_path);
+  const typeOfFailure = getTypeOfFailure(statusCode);
 
-      // Color
-      const purple = 8978687;
-      const red = 16711680;
+  // Failed embed
+  const arrOfFields = [];
+  for (const [key, value] of Object.entries(payload)) {
+    arrOfFields.push({ name: key, value: value });
+  }
 
-      // Links
-      const malUrl = 'https://myanimelist.net/anime/' + anilistResponse.idMal;
-      const kitsuUrl = 'https://kitsu.io/anime/' + kitsuResponse;
+  const failedEmbed = {
+    embeds: [
+      {
+        title: typeOfFailure,
+        timestamp: (new Date()).toISOString(),
+        color: red,
+        image: {
+          url: 'https://firebasestorage.googleapis.com/v0/b/shiden-e263a.appspot.com/o/Untitled-1-01.png?alt=media&token=ca800898-a8a4-4544-b5c2-52158026753f',
+        },
+        fields: arrOfFields,
+      },
+    ],
+  };
 
-      let links = [];
-      if (anilistResponse.idMal) links.push(`[MAL](${malUrl})`);
-      if (anilistResponse.siteUrl) links.push(`[Anilist](${anilistResponse.siteUrl})`);
-      if (kitsuResponse) links.push(`[Kitsu](${kitsuUrl})`);
-      links = links.join(' | ');
-
-      const jsonSuccessSimple = {
-        embeds: [
-          {
-            title: fileName,
-            timestamp: (new Date()).toISOString(),
-            color: purple,
-            footer: {
-              text: anilistResponse.title.romaji,
-            },
-            image: {
-              url: 'https://firebasestorage.googleapis.com/v0/b/shiden-e263a.appspot.com/o/Untitled-1-01.png?alt=media&token=ca800898-a8a4-4544-b5c2-52158026753f',
-            },
-            thumbnail: {
-              url: anilistResponse.coverImage.extraLarge,
-            },
-            author: {
-              name: `Available now`,
-            },
-            fields: [
-              {
-                name: 'Links',
-                value: `[MAL](${malUrl}) | [Anilist](${anilistResponse.siteUrl}) | [Kitsu](${kitsuUrl})`,
-                inline: true,
-              },
-            ],
+  if (typeof anilistResponse !== 'undefined') {
+    // Success embed with metadata
+    const successEmbed = {
+      embeds: [
+        {
+          title: path.basename(payload.file).replace(path.extname(payload.file), '.mp4'),
+          timestamp: (new Date()).toISOString(),
+          color: purple,
+          footer: {
+            text: anilistResponse.title.romaji,
           },
-        ],
-      };
-
-      const jsonFailed = {
-        embeds: [
-          {
-            title: payload.show,
-            description: payload.full_path,
-            timestamp: (new Date()).toISOString(),
-            color: red,
-            fields: [
-              {
-                name: 'Type of failure',
-                value: typeOfFailure,
-              },
-            ],
+          image: {
+            url: 'https://firebasestorage.googleapis.com/v0/b/shiden-e263a.appspot.com/o/Untitled-1-01.png?alt=media&token=ca800898-a8a4-4544-b5c2-52158026753f',
           },
-        ],
-      };
+          thumbnail: {
+            url: anilistResponse.coverImage.extraLarge,
+          },
+          author: {
+            name: `Available now`,
+          },
+          fields: [
+            {
+              name: 'Links',
+              value: `[MAL](https://myanimelist.net/anime/${anilistResponse.idMal}) | [Anilist](${anilistResponse.siteUrl}) | [Kitsu](https://kitsu.io/anime/${kitsuResponse}) | [AniDB](https://anidb.net/anime/${aniDBID})`,
+              inline: true,
+            },
+          ],
+        },
+      ],
+    };
 
+    return { success: successEmbed, failed: failedEmbed };
+  }
+
+  // Success embed without metadata
+  const successEmbedNoMetadata = {
+    embeds: [
+      {
+        title: path.basename(payload.file).replace(path.extname(payload.file), '.mp4'),
+        timestamp: (new Date()).toISOString(),
+        color: purple,
+        image: {
+          url: 'https://firebasestorage.googleapis.com/v0/b/shiden-e263a.appspot.com/o/Untitled-1-01.png?alt=media&token=ca800898-a8a4-4544-b5c2-52158026753f',
+        },
+        thumbnail: {
+          url: 'https://discordapp.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg',
+        },
+        author: {
+          name: `Available now`,
+        },
+      },
+    ],
+  };
+
+
+  return { success: successEmbedNoMetadata, failed: failedEmbed };
+};
+
+const getTypeOfFailure = statusCode => {
+  if (statusCode === 3) return 'Download failed';
+  if (statusCode === 4) return 'Hardsub failed';
+  if (statusCode === 5) return 'Upload failed';
+  if (statusCode === 6) return 'Folder not found';
+  if (statusCode === 7) return 'Listing files in folder failed';
+  return 'Unknown';
+};
+
+const postToWebhook = (statusCode, embed) => {
+  return new Promise(async (resolve, reject) => {
+    try {
       for (url of webhook.discordWebhooks) {
         const options = {
           url: url,
           method: 'POST',
-          json: (typeof status === 'undefined') ? jsonSuccessSimple : jsonFailed,
+          json: (typeof statusCode === 'undefined') ? embed.success : embed.failed,
         };
 
         Logger.info(`Sending request to ${url}`);
@@ -115,26 +160,11 @@ const sendToWebhook = (anilistResponse, kitsuResponse, status, payload) => {
     }
     catch (e) {
       Logger.error(e);
-    }
-  });
-};
-
-const notification = status => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const payload = await Queue.getFirst();
-
-      const kitsuResponse = await Kitsu.query(payload.show);
-      const anilistResponse = await Anilist.query(payload.show);
-      await sendToWebhook(anilistResponse, kitsuResponse, status, payload);
       resolve();
-    }
-    catch (e) {
-      Logger.error(e);
     }
   });
 };
 
 module.exports = {
-  notification,
+  send,
 };

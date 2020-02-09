@@ -6,6 +6,7 @@ const router = new express.Router();
 // Import custom modules
 const Auth = require(path.join(process.cwd(), 'src/utils/auth.js'));
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
+const Notification = require(path.join(process.cwd(), 'src/automata/notification.js'));
 const Rclone = require(path.join(process.cwd(), 'src/automata/rclone.js'));
 const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
@@ -20,12 +21,11 @@ module.exports = router.post(endpoint, async (req, res) => {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.show && payload.full_path)) return res.status(400).send('JSON body must have "show" and "full_path"');
+    if (!(payload.folder)) return res.status(400).send('JSON body must have "folder"');
 
     res.status(209).send('Payload accepted');
 
-    Logger.info(`Loaded show: ${payload.show}`);
-    Logger.info(`Loaded full_path: ${payload.full_path}`);
+    Logger.info(`Loaded folder: ${payload.folder}`);
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
 
@@ -39,7 +39,7 @@ module.exports = router.post(endpoint, async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
-          full_path: path.join(payload.full_path, episode),
+          file: path.join(payload.folder, episode),
           video_index: payload.video_index,
           audio_index: payload.audio_index,
           sub_index: payload.sub_index,
@@ -53,7 +53,7 @@ module.exports = router.post(endpoint, async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
         const episodePayload = {
           show: payload.show,
-          full_path: path.join(payload.full_path, episode),
+          folder: path.join(payload.folder, episode),
           video_index: payload.video_index,
           audio_index: payload.audio_index,
           sub_index: payload.sub_index,
@@ -62,10 +62,15 @@ module.exports = router.post(endpoint, async (req, res) => {
       }
     }
   }
-  catch (e) {
-    Logger.error(e);
-
-    if (e.includes('SyntaxError')) return res.status(400).send(e);
+  catch (status) {
+    Logger.error(status);
+    if (status === 6) {
+      Logger.error(`Exit code: ${status}`);
+      Logger.info('[4/4] Sending notifications...');
+      Notification.send(status);
+      return;
+    }
+    if (status.includes('SyntaxError')) return res.status(400).send(status);
     else return res.status(500).send('Unknown error');
   }
 });

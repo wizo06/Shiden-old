@@ -24,7 +24,7 @@ module.exports = Encoder = {
         const payload = await Queue.getFirst();
         const tempPath = await Temp.getTempFolderPath();
 
-        const fileName = path.basename(payload.full_path);
+        const fileName = path.basename(payload.file);
         const ext = path.extname(fileName);
         const originalFile = path.join(tempPath, fileName);
         const tempFile = path.join(tempPath, `temp${ext}`);
