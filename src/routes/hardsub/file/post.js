@@ -18,7 +18,7 @@ module.exports = router.post('/hardsub/file', async (req, res) => {
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
 
-    const requiredKeys = ['file'];
+    const requiredKeys = ['sourceFile', 'destFile'];
     const payloadHasAllRequiredKeys = requiredKeys.every(element => typeof payload[element] !== 'undefined');
     if (!(payloadHasAllRequiredKeys)) return res.status(400).send('Missing required key');
 

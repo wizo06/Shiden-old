@@ -28,7 +28,7 @@ module.exports = Rclone = {
       try {
         Logger.info(`Checking for episode in ${source}`);
 
-        source = Paths.parseRclonePaths(source, payload.file);
+        source = Paths.parseRclonePaths(source, payload.sourceFile);
 
         const command = `${Paths.rclonePath} lsf "${source}" --files-only ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         await Promisefied.exec(command);
@@ -65,7 +65,7 @@ module.exports = Rclone = {
           return;
         }
 
-        const source = Paths.parseRclonePaths(validSource, payload.file);
+        const source = Paths.parseRclonePaths(validSource, payload.sourceFile);
         const destination = await Temp.getTempFolderPath();
 
         Logger.info(`Downloading ${source}`);
@@ -90,16 +90,13 @@ module.exports = Rclone = {
       try {
         const payload = await Queue.getFirst();
         const tempPath = await Temp.getTempFolderPath();
-        const fileName = path.basename(payload.file);
-        const ext = path.extname(fileName);
-        const source = path.join(tempPath, fileName).replace(ext, '.mp4');
-        const fullPathNoFile = Paths.parseHardsubPath(payload.file);
+        const source = path.join(tempPath, path.basename(payload.destFile));
 
         for (dest of remote.uploadDestination) {
-          const destination = Paths.parseRclonePaths(dest, fullPathNoFile);
+          const destination = Paths.parseRclonePaths(dest, payload.destFile);
           Logger.info(`Uploading to ${destination}`);
 
-          const command = `${Paths.rclonePath} copy "${source}" "${destination}" ${flags.rclone}`;
+          const command = `${Paths.rclonePath} copyto "${source}" "${destination}" ${flags.rclone}`;
           await Promisefied.exec(command);
           Logger.success(`Upload completed`);
         }
