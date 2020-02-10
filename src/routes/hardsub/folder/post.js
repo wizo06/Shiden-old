@@ -30,6 +30,8 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
       Logger.success(`Loaded ${key}: ${value}`);
     }
 
+    // Remove trailing slash
+    folderPayload.folder = folderPayload.folder.replace(/\/$/, '');
     const arrOfFiles = await Rclone.getListOfEpisodes(folderPayload);
 
     if (!arrOfFiles[0]) {
@@ -43,6 +45,7 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
 
         const filePayload = Object.assign({}, folderPayload);
+        filePayload.file = path.join(folderPayload.folder, episode);
         await Queue.push(filePayload);
       }
       processNextPayload();
@@ -53,6 +56,7 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
         Logger.info(`Loaded episode: ${episode}`);
 
         const filePayload = Object.assign({}, folderPayload);
+        filePayload.file = path.join(folderPayload.folder, episode);
         await Queue.push(filePayload);
       }
     }
