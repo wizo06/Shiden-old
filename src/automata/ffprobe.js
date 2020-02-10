@@ -57,6 +57,7 @@ module.exports = FFprobe = {
       Logger.info(`Looking for stereo audio stream`);
       const stereoAudioStream = streams.filter(stream => stream.channels === 2)[0];
       if (stereoAudioStream) {
+        Logger.success(`Stereo audio stream found.`);
         return resolve(`-map 0:${stereoAudioStream.index} -acodec aac -ab 320k`);
       }
       else {

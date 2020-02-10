@@ -16,7 +16,7 @@ const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js')
 const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
 const Kitsu = require(path.join(process.cwd(), 'src/automata/kitsu.js'));
 const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/animeOfflineDatabase.js'));
-const { webhook } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const { notification } = require(path.join(process.cwd(), 'src/utils/config.js'));
 
 const send = statusCode => {
   return new Promise(async (resolve, reject) => {
@@ -140,14 +140,14 @@ const getTypeOfFailure = statusCode => {
 const postToWebhook = (statusCode, embed) => {
   return new Promise(async (resolve, reject) => {
     try {
-      for (url of webhook.discordWebhooks) {
+      for (webhook of notification.discordWebhooks) {
         const options = {
-          url: url,
+          url: webhook.url,
           method: 'POST',
           json: (typeof statusCode === 'undefined') ? embed.success : embed.failed,
         };
 
-        Logger.info(`Sending request to ${url}`);
+        Logger.info(`Sending request to ${webhook.name}`);
         const response = await Promisefied.request(options);
         if (response.res.statusCode === 204) Logger.success(`Successful sent with return of ${response.res.statusCode}`);
         else {

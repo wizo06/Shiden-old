@@ -78,7 +78,7 @@ npm start -- --clean
 
 | Field | Required | Description |
 | --- | --- | --- |
-| file | Yes | Full path of the file to be hardsubbed. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
+| file | Yes | Full path of the file to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
 | showName | No | Used for metadata when sending out notifications |
 | videoIndex | No | Stream index number that will be used for video |
 | audioIndex | No | Stream index number that will be used for audio |
@@ -104,7 +104,7 @@ npm start -- --clean
 
 | Field | Required | Description |
 | --- | --- | --- |
-| folder | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
+| folder | Yes | Full path of the folder to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
 | showName | No | Used for metadata when sending out notifications |
 | videoIndex | No | Stream index number that will be used for video |
 | audioIndex | No | Stream index number that will be used for audio |
