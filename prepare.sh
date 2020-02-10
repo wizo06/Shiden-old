@@ -30,6 +30,8 @@ script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "${script_path}"
 
 mkdir -p bin
+
+# FFmpeg and FFprobe
 if [ -f bin/ffmpeg ] && [ -f bin/ffprobe ]; then
   _success "Found FFmpeg and FFprobe binaries"
 else
@@ -53,6 +55,7 @@ else
   _success "Installed FFmpeg and FFprobe"
 fi
 
+# Rclone
 if [ -f bin/rclone ]; then
   _success "Found Rclone binary"
 else
@@ -75,6 +78,7 @@ else
   _success "Installed rclone"
 fi
 
+# Rclone config
 if [ -f conf/rclone.conf ]; then
   _success "Found rclone.conf"
 else
@@ -82,6 +86,7 @@ else
   bin/rclone config --config conf/rclone.conf
 fi
 
+# node_modules
 if [ -d node_modules ]; then
   _success "Found node modules/"
 else
@@ -89,6 +94,7 @@ else
   npm i
 fi
 
+# Config files
 branch_name=$(cat .git/HEAD | cut -d "/" -f 3)
 if [ "${branch_name}" == "master" ]; then
 

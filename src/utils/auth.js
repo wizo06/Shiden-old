@@ -23,8 +23,6 @@ module.exports = Auth = {
       const authFile = yaml.safeLoad(fs.readFileSync(authPath, 'utf8'));
 
       for ([user, token] of Object.entries(authFile)) {
-        console.log(`${user} ${token}`);
-        console.log(tokenFromRequest);
         if (token === tokenFromRequest) {
           Logger.debug(`Request authorized`);
           Logger.debug(`Matching key was sent from ${user}`);

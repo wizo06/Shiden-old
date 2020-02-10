@@ -181,7 +181,7 @@ module.exports = Queue = {
         const queue = Queue.readFile(queueFilePath);
         const filtered = queue.filter((queueItem, index) => {
           const queueItemIsFirstElement = index === 0;
-          const queueItemDoesNotContainSubstring = !queueItem.file.includes(payload.file);
+          const queueItemDoesNotContainSubstring = !queueItem.sourceFile.includes(payload.sourceFile);
           if (queueItemIsFirstElement || queueItemDoesNotContainSubstring) {
             return true; // Return true if item is first element OR does not match substring
           }

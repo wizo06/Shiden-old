@@ -12,9 +12,8 @@ require('toml-require').install({ toml: require('toml') });
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
-const { subtitle } = require(path.join(process.cwd(), 'src/utils/config.js'));
 
-module.exports = Ffprobe = {
+module.exports = FFprobe = {
   /**
    * FFprobe the temp file and return stream info in an array
    * @param {{string}} tempFile - Path to temp file
@@ -42,35 +41,28 @@ module.exports = Ffprobe = {
    */
   getAudioFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
-      if (payload.audio_index) {
-        Logger.info(`Payload has specified audio stream index: ${payload.audio_index}`);
-        const audioStream = streams.filter(stream => stream.index == payload.audio_index)[0];
-        if (audioStream.codec_type === 'audio') {
-          resolve(`-map 0:${payload.audio_index} -acodec aac -ab 320k`);
+      if (payload.audioIndex) {
+        Logger.info(`Payload has specified audio index: ${payload.audioIndex}`);
+        const audioStream = streams.filter(stream => stream.index == payload.audioIndex)[0];
+        if (audioStream && audioStream.codec_type === 'audio') {
+          return resolve(`-map 0:${payload.audioIndex} -acodec aac -ab 320k`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.audio_index} is not an audio stream.`);
-          reject();
+          Logger.error(`Stream with index: ${payload.audioIndex} is not an audio stream or does not exist.`);
+          return reject();
         }
       }
+
+      Logger.info(`Audio index not specified in payload`);
+      Logger.info(`Looking for stereo audio stream`);
+      const stereoAudioStream = streams.filter(stream => stream.channels === 2)[0];
+      if (stereoAudioStream) {
+        Logger.success(`Stereo audio stream found.`);
+        return resolve(`-map 0:${stereoAudioStream.index} -acodec aac -ab 320k`);
+      }
       else {
-        Logger.info(`Looking for Japanese audio stream.`);
-        const jpnAAC = streams.filter(stream => {
-          if (stream.tags) return stream.codec_name === 'aac' && stream.tags.language === 'jpn';
-          else return false;
-        })[0];
-
-        const jpnAnyCodec = streams.filter(stream => {
-          if (stream.tags) return stream.codec_type === 'audio' && stream.tags.language === 'jpn';
-          else return false;
-        })[0];
-
-        if (jpnAAC) resolve(`-map 0:${jpnAAC.index} -c:a copy`);
-        else if (jpnAnyCodec) resolve(`-map 0:${jpnAnyCodec.index} -acodec aac -ab 320k`);
-        else {
-          Logger.info(`Did not find Japanese audio stream. Using first available audio stream.`);
-          resolve(`-map 0:a -acodec aac -ab 320k`);
-        }
+        Logger.error(`Stereo audio stream not found. Using first available audio strema.`);
+        return resolve(`-map 0:a -acodec aac -ab 320k`);
       }
     });
   },
@@ -83,22 +75,20 @@ module.exports = Ffprobe = {
   */
   getVideoFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
-      if (payload.video_index) {
-        Logger.info(`Payload has specified video stream index: ${payload.video_index}`);
-        const videoStream = streams.filter(stream => stream.index == payload.video_index)[0];
-        if (videoStream.codec_type === 'video') {
-          resolve(`-map 0:${payload.video_index} -c:v copy`);
+      if (payload.videoIndex) {
+        Logger.info(`Payload has specified video index: ${payload.videoIndex}`);
+        const videoStream = streams.filter(stream => stream.index == payload.videoIndex)[0];
+        if (videoStream && videoStream.codec_type === 'video') {
+          return resolve(`-map 0:${payload.videoIndex} -c:v copy`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.video_index} is not a video stream.`);
-          reject();
+          Logger.error(`Stream with index: ${payload.videoIndex} is not a video stream or does not exist.`);
+          return reject();
         }
       }
-      else {
-        const videoStream = streams.filter(stream => stream.codec_type === 'video')[0];
-        if (videoStream) resolve(`-map 0:${videoStream.index} -c:v copy`);
-        else resolve(`-map 0:v -c:v copy`);
-      }
+
+      Logger.info(`Video index not specified in payload. Using first available video stream.`);
+      return resolve(`-map 0:v -c:v copy`);
     });
   },
 
@@ -110,102 +100,40 @@ module.exports = Ffprobe = {
   hasSub: streams => {
     const sub = streams.filter(stream => stream.codec_type === 'subtitle')[0];
     if (sub) {
-      Logger.info(`Subtitle stream detected`);
+      Logger.info(`Subtitle stream found`);
       return true;
     }
     else {
-      Logger.info(`Subtitle stream not detected`);
+      Logger.info(`Subtitle stream not found`);
       return false;
     }
   },
 
   /**
-   * Determines if subtitle stream is text based or bitmap based
+   * Returns info about the subtitle stream specified in payload.
+   * Otherwise returns info about first available subtitle stream.
    * @param {{Array}} streams - Array of streams from temp file
    * @param {{Object}} payload - Incoming payload in JSON format
-   * @return {{codecBase: string, index: number}} - Returns "text" or "bitmap" in codecBase and the index of subtitle stream
+   * @return {{Object}} - Returns subtitle stream info
    */
-  getSubStream: (streams, payload) => {
-    if (payload.sub_index) {
-      Logger.info(`Payload has specified subtitle index: ${payload.sub_index}`);
-      let codecBase = 'default';
-      const subStream = streams.filter(stream => stream.index == payload.sub_index)[0];
-      if (subStream) {
-        if (subStream.codec_name === 'srt' || subStream.codec_name === 'ass') {
-          codecBase = 'text';
-        }
-        else if (subStream.codec_name === 'hdmv_pgs_subtitle') {
-          codecBase = 'bitmap';
+  getSubStreamInfo: (streams, payload) => {
+    return new Promise((resolve, reject) => {
+      if (payload.subIndex) {
+        Logger.info(`Payload has specified subtitle index: ${payload.subIndex}`);
+        const payloadSpecifiedSubStream = streams.filter(stream => stream.index == payload.subIndex)[0];
+        if (payloadSpecifiedSubStream && payloadSpecifiedSubStream.codec_type === 'subtitle') {
+          return resolve(payloadSpecifiedSubStream);
         }
         else {
-          Logger.error(`Stream with index: ${payload.sub_index} is neither text or bitmap based.`);
-          console.log(subStream);
+          Logger.error(`Stream with index: ${payload.subIndex} is not a subtitle stream or does not exist.`);
+          return reject();
         }
       }
-      else {
-        Logger.error(`Stream with index: ${payload.sub_index} does not exist.`);
-      }
-      return { codecBase, index: payload.sub_index };
-    }
 
-    let codecBase = 'default';
-    let index = 's';
-    let preferredFound = false;
-
-    for (lang of subtitle.language) {
-      const textSubStream = streams.filter(stream => {
-        if (stream.tags) {
-          const textBasedCodec = (stream.codec_name === 'srt' || stream.codec_name === 'ass');
-          const acceptedLang = (stream.tags.language === lang);
-          return (textBasedCodec && acceptedLang);
-        }
-        else {
-          return false;
-        }
-      })[0];
-      if (textSubStream) {
-        Logger.info(`Preferred subtitle stream found.`);
-        Logger.info(`Codec: ${textSubStream.codec_name}`);
-        if (sub.tags) Logger.info(`Language: ${textSubStream.tags.language ? textSubStream.tags.language : textSubStream.tags.title}`);
-        Logger.info(`Index: ${textSubStream.index}`);
-        preferredFound = true;
-        codecBase = 'text';
-        index = textSubStream.index;
-        break;
-      }
-
-      const bitmapSubStream = streams.filter(stream => {
-        if (stream.tags) {
-          const textBasedCodec = (stream.codec_name === 'hdmv_pgs_subtitle');
-          const acceptedLang = (stream.tags.language === lang);
-          return (textBasedCodec && acceptedLang);
-        }
-        else {
-          return false;
-        }
-      })[0];
-      if (bitmapSubStream) {
-        Logger.info(`Preferred subtitle stream found.`);
-        Logger.info(`Codec: ${bitmapSubStream.codec_name}`);
-        if (sub.tags) Logger.info(`Language: ${bitmapSubStream.tags.language ? bitmapSubStream.tags.language : bitmapSubStream.tags.title}`);
-        Logger.info(`Index: ${bitmapSubStream.index}`);
-        preferredFound = true;
-        codecBase = 'bitmap';
-        index = bitmapSubStream.index;
-        break;
-      }
-    }
-
-    if (!preferredFound) {
-      Logger.info(`Preferred subtitle language not found. Looking for first available subtitle stream.`);
-      const sub = streams.filter(stream => stream.codec_type === 'subtitle')[0];
-      Logger.info(`Codec: ${sub.codec_name}`);
-      if (sub.tags) Logger.info(`Language: ${sub.tags.language ? sub.tags.language : sub.tags.title}`);
-      Logger.info(`Index: ${sub.index}`);
-      index = sub.index;
-    }
-
-    return { codecBase, index };
+      Logger.info(`Subtitle index not specified in payload. Using first available subtitle stream.`);
+      const firstAvailableSubtitleStream = streams.filter(stream => stream.codec_type === 'subtitle')[0];
+      return resolve(firstAvailableSubtitleStream);
+    });
   },
 
 };

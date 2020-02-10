@@ -1,7 +1,7 @@
 /**
  * @module promisefied
- * This module simply transforms some functions that returns a callback
- * into a function that returns a promise
+ * This module simply transforms functions that return a callback
+ * into functions that return a promise
  */
 
 // Import node modules
@@ -17,7 +17,7 @@ module.exports = Promisefied = {
     return new Promise((resolve, reject) => {
       let stdoutMessage = '';
       let errMessage = '';
-      Logger.debug(`Running command ${command}`);
+      Logger.debug(`${command}`);
       subprocess = exec(command, options);
       subprocess.stdout.on('data', data => stdoutMessage += data);
       subprocess.stderr.on('data', data => errMessage += data);
@@ -43,7 +43,7 @@ module.exports = Promisefied = {
         resolve(JSON.parse(string));
       }
       catch (e) {
-        reject(e.stack.split('\n')[0]);
+        reject('SyntaxError');
       }
     });
   },

@@ -1,6 +1,6 @@
 /**
  * @module anilist
- * This module handles requests to Anilist GraphQL endpoints
+ * This module handles requests to Anilist GraphQL API
  */
 
 // Import node modules

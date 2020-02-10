@@ -8,14 +8,14 @@ It downloads from and uploads to remote/local storages using **rclone**.
 - [Getting Started](#getting-started)
   - [Configure](#configure)
   - [Start up Shiden](#start-up-shiden)
-- [Usage](#usage)
-  - [GET](#GET)
-    - /queue
-  - [POST](#POST)
-    - /hardsub/file
-    - /hardsub/folder
-  - [DELETE](#DELETE)
-    - /queue
+- [Routes](#routes)
+  - [/hardsub/file](#hardsubfile)
+    - POST
+  - [/hardsub/folder](#hardsubfolder)
+    - POST
+  - [/queue](#queue)
+    - DELETE
+    - GET
 
 # Features
 - Queue system. First come first serve basis.
@@ -26,7 +26,6 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - Videos that have Bitmap based subtitle stream: Use `-filter_complex overlay`
   - **Note**: If the file has both text based and bitmap based subtitle streams, text based stream will be prioritized over bitmap based
 - Option to specify stream index for video, audio and/or subtitle
-- Language priority for subtitles when deciding which subtitle stream to use for hardsubbing
 - Discord notification with webhooks
 
 # Requirements
@@ -57,104 +56,91 @@ Alternatively, if you want to start up Shiden and remove any leftover payload in
 ```bash
 npm start -- --clean
 ```
-**Note** the `--` after `npm start` is necessary. This is how you pass arguments to `npm`. If your `package.json` looks like this:
-```json
-"scripts": {
-  "start": "node src/server.js"
-}
-```
-then `node src/server.js --clean` => `npm start -- --clean`.
 
-- Here is the [pull request](https://github.com/npm/npm/pull/5518) for this feature.
-- [Official documentation](https://docs.npmjs.com/cli/run-script) of this feature.
-- Or run `npm help run` to see the documentation in the terminal.
+# Routes
 
-# Usage
+## `/hardsub/file`
 
-## GET
-
-### `/queue`
-  - Returns the current queue in an array.
-
-## POST
-
-### `/hardsub/file`
+### POST
   - Queue up **one file**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
-  - The JSON in the body should look like this
+  - Example of request body
   ```json
   {
-      "file": "Airing/SHOW NAME/SEASON 1/FILE NAME.MKV",
-      "show": "SHOW NAME",
-      "video_index": 0,
-      "audio_index": 1,
-      "sub_index": 2
+      "sourceFile": "TODO/FILE NAME.MKV",
+      "destFolder": "DONE",
   }
   ```  
 
-| Field | Required | Description |
-| --- | --- | --- |
-| file | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
-| show | No | Used for metadata when sending out notifications |
-| video_index | No | Stream index number that will be used for video |
-| audio_index | No | Stream index number that will be used for audio |
-| sub_index | No | Stream index number that will be used for subtitle |
+| Field | Required | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| sourceFile | Yes | String | | Full path of the source file in the remote storage that rclone will download from |
+| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to |
+| showName | No | String | | Name of the show used for metadata when sending out notifications |
+| videoIndex | No | Number | First available | Stream index number that will be used for video |
+| audioIndex | No | Number | First available | Stream index number that will be used for audio |
+| subIndex | No | Number | First available | Stream index number that will be used for subtitle |
 
 
-### `/hardsub/folder`
+## `/hardsub/folder`
+
+### POST
   - Queue up **all files of a folder**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
-  - The JSON in the body should look like this
+  - Example of request body
   ```json
   {
-      "folder": "Airing/SHOW NAME/SEASON 1",
-      "show": "SHOW NAME",
-      "video_index": 0,
-      "audio_index": 1,
-      "sub_index": 2
+      "sourceFolder": "TODO",
+      "destFolder": "DONE",
   }
   ```  
 
-| Field | Required | Description |
-| --- | --- | --- |
-| folder | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
-| show | No | Used for metadata when sending out notifications |
-| video_index | No | Stream index number that will be used for video |
-| audio_index | No | Stream index number that will be used for audio |
-| sub_index | No | Stream index number that will be used for subtitle |
+| Field | Required | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| sourceFolder | Yes | String | | Full path of the source folder in the remote storage that rclone will download from |
+| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to |
+| showName | No | String | | Name of the show used for metadata when sending out notifications |
+| videoIndex | No | Number | First available | Stream index number that will be used for video |
+| audioIndex | No | Number | First available | Stream index number that will be used for audio |
+| subIndex | No | Number | First available | Stream index number that will be used for subtitle |
 
-## DELETE
+## `/queue`
 
-### `/queue`
+### DELETE
   - Delete **all payloads** in the queue that **matches the provided string** **EXCEPT** if the payload is **first element in queue**
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
-  - The JSON in the body should look like this
+  - Example of request body
   ```json
   {
-      "stringMatch": "string used for matching"
+      "stringMatch": "lorem ipsum"
   }
   ```
+
+  | Field | Required | Type | Default | Description |
+  | --- | --- | --- | --- | --- |
+  | stringMatch | Yes | String | | String used for matching against `sourceFile` key in payload |
+
 Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes) is used. For example, if the queue has the following payloads:
 ```json
 [
   {
-    "show": "...",
-    "file": "Grand Blue/Grand Blue - 03 [1080p].mkv"
+    "sourceFile": "Grand Blue/Grand Blue - 03 [1080p].mkv",
+    "destFolder": "Grand Blue [Hardsub]"
   },
   {
-    "show": "...",
-    "file": "Grand Blue/Grand Blue - 01 [1080p].mkv"
+    "sourceFile": "Grand Blue/Grand Blue - 01 [1080p].mkv",
+    "destFolder": "Grand Blue [Hardsub]"
   },
   {
-    "show": "...",
-    "file": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
+    "sourceFile": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv",
+    "destFolder": "3-gatsu no Lion [Hardsub]"
   },
   {
-    "show": "...",
-    "file": "Grand Blue/Grand Blue - 02 [1080p].mkv"
+    "sourceFile": "Some folder/original.mkv",
+    "destFolder": "Grand Blue [Hardsub]"
   }
 ]
 ```
@@ -164,9 +150,12 @@ and your request looks like this:
   "stringMatch": "Blue"
 }
 ```
-it will delete these two payloads from the queue:
+it will only delete this payload from the queue:
 ```
 Grand Blue - 01 [1080p].mkv
-Grand Blue - 02 [1080p].mkv
 ```
-**NOTE** that `Grand Blue - 03 [1080p].mkv` will not be deleted in this case because it is the first element in the queue.
+**NOTE** that `Grand Blue - 03 [1080p].mkv` will not be deleted in this case because it is the first element in the queue.  
+**NOTE** that `original.mkv` will not be deleted in this case because the `sourceFile` key does not match with `Blue`.  
+
+### GET
+  - Returns the current queue in an array.

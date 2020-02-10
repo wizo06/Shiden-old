@@ -23,19 +23,19 @@ module.exports = Rclone = {
    * @param {{Object}} payload - Incoming payload in JSON format
    * @return {{boolean}}
    */
-  checkEpisodeExists: (source, payload) => {
+  checkFileExists: (source, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.info(`Checking for episode in ${source}`);
+        Logger.info(`Checking for file in ${source}`);
 
-        source = Paths.parseRclonePaths(source, payload.file);
+        source = Paths.parseRclonePaths(source, payload.sourceFile);
 
         const command = `${Paths.rclonePath} lsf "${source}" --files-only ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         await Promisefied.exec(command);
         resolve(true);
       }
       catch (e) {
-        Logger.error(e);
+        Logger.error(`File not found in ${source}`);
         resolve(false);
       }
     });
@@ -51,21 +51,21 @@ module.exports = Rclone = {
         const payload = await Queue.getFirst();
         let validSource = false;
         for (src of remote.downloadSource) {
-          if (await Rclone.checkEpisodeExists(src, payload)) {
+          if (await Rclone.checkFileExists(src, payload)) {
             Logger.success(`Found file in ${src}`);
             validSource = src;
             break;
           }
         }
 
-        // If episode not found in any source, reject
+        // If file not found in any source, reject
         if (!validSource) {
           Logger.error(`No sources contained the file, cancelling operation`);
           reject(3);
           return;
         }
 
-        const source = Paths.parseRclonePaths(validSource, payload.file);
+        const source = Paths.parseRclonePaths(validSource, payload.sourceFile);
         const destination = await Temp.getTempFolderPath();
 
         Logger.info(`Downloading ${source}`);
@@ -90,13 +90,11 @@ module.exports = Rclone = {
       try {
         const payload = await Queue.getFirst();
         const tempPath = await Temp.getTempFolderPath();
-        const fileName = path.basename(payload.file);
-        const ext = path.extname(fileName);
-        const source = path.join(tempPath, fileName).replace(ext, '.mp4');
-        const fullPathNoFile = Paths.parseHardsubPath(payload.file);
+        const ext = path.extname(payload.sourceFile);
+        const source = path.join(tempPath, path.basename(payload.sourceFile.replace(ext, '.mp4')));
 
         for (dest of remote.uploadDestination) {
-          const destination = Paths.parseRclonePaths(dest, fullPathNoFile);
+          const destination = Paths.parseRclonePaths(dest, payload.destFolder);
           Logger.info(`Uploading to ${destination}`);
 
           const command = `${Paths.rclonePath} copy "${source}" "${destination}" ${flags.rclone}`;
@@ -113,11 +111,11 @@ module.exports = Rclone = {
   },
 
   /**
-   * Get the list of episodes of a folder and return them in an array
+   * Get the list of files of a folder and return them in an array
    * @param {{Object}} payload - Incoming payload in JSON format
-   * @return {{Array}} - Returns an array of episodes of a folder
+   * @return {{Array}} - Returns an array of files of a folder
    */
-  getListOfEpisodes: payload => {
+  getListOfFiles: payload => {
     return new Promise(async (resolve, reject) => {
       try {
         let validSource = false;
@@ -131,22 +129,22 @@ module.exports = Rclone = {
 
         // If folder not found in any source, reject
         if (!validSource) {
-          Logger.error(`No sources contained the folder, cancelling operation`);
+          Logger.error(`Folder not found`);
           reject(6);
           return;
         }
 
-        const source = Paths.parseRclonePaths(validSource, payload.folder);
+        const source = Paths.parseRclonePaths(validSource, payload.sourceFolder);
 
-        Logger.info(`Getting list of episodes from ${source}`);
+        Logger.info(`Getting list of files from ${source}`);
         const command = `${Paths.rclonePath} lsf "${source}" --files-only -R ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         const response = await Promisefied.exec(command);
-        const arrOfEpisodes = response.split('\n').slice(0, -1);
-        resolve(arrOfEpisodes);
+        const arrOfFiles = response.split('\n').slice(0, -1);
+        resolve(arrOfFiles);
       }
       catch (e) {
         Logger.error(e);
-        reject(7);
+        reject();
       }
     });
   },
@@ -162,9 +160,18 @@ module.exports = Rclone = {
       try {
         Logger.info(`Checking for folder in ${source}`);
 
-        const fullPathNoLastFolder = payload.folder.split('/').slice(0, -1).join('/');
-        let lastFolder = payload.folder.split('/').pop();
+        const fullPathNoLastFolder = payload.sourceFolder.split('/').slice(0, -1).join('/');
+        let lastFolder = payload.sourceFolder.split('/').pop();
         lastFolder = (lastFolder.endsWith('/')) ? lastFolder : lastFolder + '/';
+
+        // Escape special characters as documented here https://rclone.org/filtering/
+        lastFolder = lastFolder.replace('*', '\\*');
+        lastFolder = lastFolder.replace('?', '\\?');
+        lastFolder = lastFolder.replace('[', '\\[');
+        lastFolder = lastFolder.replace(']', '\\]');
+        lastFolder = lastFolder.replace('{', '\\{');
+        lastFolder = lastFolder.replace('}', '\\}');
+
         source = Paths.parseRclonePaths(source, fullPathNoLastFolder);
 
         command = `${Paths.rclonePath} lsf "${source}" --dirs-only --include "${lastFolder}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;

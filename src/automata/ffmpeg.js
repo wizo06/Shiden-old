@@ -10,14 +10,14 @@ require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const Ffprobe = require(path.join(process.cwd(), 'src/automata/ffprobe.js'));
+const FFprobe = require(path.join(process.cwd(), 'src/automata/ffprobe.js'));
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 
 // master will be set to TRUE if current git branch name is 'master'
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
-module.exports = Ffmpeg = {
+module.exports = FFmpeg = {
   /**
    * Extract video and audio streams into temp_prepped
    * @param {{string}} tempFile - Path to temp file
@@ -30,13 +30,13 @@ module.exports = Ffmpeg = {
     return new Promise(async (resolve, reject) => {
       try {
         let command = [`${Paths.ffmpegPath} -i "${tempFile}"`];
-        command.push(await Ffprobe.getVideoFlags(streams, payload));
-        command.push(await Ffprobe.getAudioFlags(streams, payload));
+        command.push(await FFprobe.getVideoFlags(streams, payload));
+        command.push(await FFprobe.getAudioFlags(streams, payload));
         command.push(master ? '' : '-t 300');
         command.push(`"${tempPreppedFile}"`);
         command = command.join(' ');
         await Promisefied.exec(command);
-        Logger.info(`File has been prepared in ${path.basename(tempPreppedFile)}`);
+        Logger.success(`File has been prepared in ${path.basename(tempPreppedFile)}`);
         resolve();
       }
       catch (e) {

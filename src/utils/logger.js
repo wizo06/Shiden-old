@@ -23,14 +23,14 @@ module.exports = Logger = {
     Reverse: '\x1b[7m',
     Hidden: '\x1b[8m',
 
-    FgBlack: '\x1b[30m',
-    FgRed: '\x1b[31m',
-    FgGreen: '\x1b[32m',
-    FgYellow: '\x1b[33m',
-    FgBlue: '\x1b[34m',
-    FgMagenta: '\x1b[35m',
-    FgCyan: '\x1b[36m',
-    FgWhite: '\x1b[37m',
+    black: '\x1b[30m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+    white: '\x1b[37m',
   },
 
   getCallingDetails: () => {
@@ -51,29 +51,41 @@ module.exports = Logger = {
     return filename;
   },
 
-  success: (data, color = Logger.Colors.Bright + Logger.Colors.FgGreen) => {
-    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][SUCCESS]: [${Logger.getCallingDetails()}]:${color}✔ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  success: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.green;
+    console.log(`[${timestamp}][SUCCESS]: [${Logger.getCallingDetails()}]:${iconColor}✔ ${Logger.Colors.Reset}${color}${data}${Logger.Colors.Reset}`);
   },
 
-  info: (data, color = Logger.Colors.Bright + Logger.Colors.FgCyan) => {
-    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][INFO]: [${Logger.getCallingDetails()}]:${color}i ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  info: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.cyan;
+    console.log(`[${timestamp}][INFO]: [${Logger.getCallingDetails()}]:${iconColor}i ${Logger.Colors.Reset}${color}${data}${Logger.Colors.Reset}`);
   },
 
-  debug: (data, color = Logger.Colors.FgYellow) => {
+  debug: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.yellow;
     (master || verbosity) ? '' :
-      console.log(`[${moment().format('MMMDD|HH:mm:ss')}][DEBUG]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+      console.log(`[${timestamp}][DEBUG]: [${Logger.getCallingDetails()}]:${iconColor}! ${Logger.Colors.Reset}${color}${data}${Logger.Colors.Reset}`);
   },
 
-  warning: (data, color = Logger.Colors.Bright + Logger.Colors.FgYellow) => {
-    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][WARNING]: [${Logger.getCallingDetails()}]:${color}! ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  warning: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.yellow;
+    console.log(`[${timestamp}][WARNING]: [${Logger.getCallingDetails()}]:${iconColor}⚠ ${Logger.Colors.Reset}${Logger.Colors.Bright}${color}${data}${Logger.Colors.Reset}`);
   },
 
-  error: (data, color = Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][ERROR]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  error: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.red;
+    console.log(`[${timestamp}][ERROR]: [${Logger.getCallingDetails()}]:${iconColor}✖ ${Logger.Colors.Reset}${color}${data}${Logger.Colors.Reset}`);
   },
 
-  critical: (data, color = Logger.Colors.Bright + Logger.Colors.FgRed) => {
-    console.log(`[${moment().format('MMMDD|HH:mm:ss')}][CRITICAL]: [${Logger.getCallingDetails()}]:${color}✖ ${Logger.Colors.FgWhite}${data}${Logger.Colors.Reset}`);
+  critical: (data, color = '') => {
+    const timestamp = moment().format('MMMDD|HH:mm:ss');
+    const iconColor = Logger.Colors.Bright + Logger.Colors.red;
+    console.log(`[${timestamp}][CRITICAL]: [${Logger.getCallingDetails()}]:${iconColor}✖ ${Logger.Colors.Reset}${Logger.Colors.Bright}${color}${data}${Logger.Colors.Reset}`);
   },
 
 };

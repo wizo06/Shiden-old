@@ -16,16 +16,16 @@ const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js')
 const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
 const Kitsu = require(path.join(process.cwd(), 'src/automata/kitsu.js'));
 const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/animeOfflineDatabase.js'));
-const { webhook } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const { notification } = require(path.join(process.cwd(), 'src/utils/config.js'));
 
 const send = statusCode => {
   return new Promise(async (resolve, reject) => {
     try {
       const payload = await Queue.getFirst();
 
-      if (payload.show) {
-        const anilistResponse = await Anilist.query(payload.show);
-        const kitsuResponse = await Kitsu.query(payload.show);
+      if (payload.showName) {
+        const anilistResponse = await Anilist.query(payload.showName);
+        const kitsuResponse = await Kitsu.query(payload.showName);
         const aniDBID = await AnimeOfflineDatabase.query(anilistResponse.id);
         const embed = buildEmbeds(anilistResponse, kitsuResponse, aniDBID, statusCode, payload);
         await postToWebhook(statusCode, embed);
@@ -75,7 +75,7 @@ const buildEmbeds = (anilistResponse, kitsuResponse, aniDBID, statusCode, payloa
     const successEmbed = {
       embeds: [
         {
-          title: path.basename(payload.file).replace(path.extname(payload.file), '.mp4'),
+          title: path.basename(payload.sourceFile),
           timestamp: (new Date()).toISOString(),
           color: purple,
           footer: {
@@ -108,7 +108,7 @@ const buildEmbeds = (anilistResponse, kitsuResponse, aniDBID, statusCode, payloa
   const successEmbedNoMetadata = {
     embeds: [
       {
-        title: path.basename(payload.file).replace(path.extname(payload.file), '.mp4'),
+        title: path.basename(payload.sourceFile),
         timestamp: (new Date()).toISOString(),
         color: purple,
         image: {
@@ -132,30 +132,31 @@ const getTypeOfFailure = statusCode => {
   if (statusCode === 3) return 'Download failed';
   if (statusCode === 4) return 'Hardsub failed';
   if (statusCode === 5) return 'Upload failed';
-  if (statusCode === 6) return 'Folder not found';
-  if (statusCode === 7) return 'Listing files in folder failed';
   return 'Unknown';
 };
 
 const postToWebhook = (statusCode, embed) => {
   return new Promise(async (resolve, reject) => {
     try {
-      for (url of webhook.discordWebhooks) {
+      for (webhook of notification.discordWebhooks) {
         const options = {
-          url: url,
+          url: webhook.url,
           method: 'POST',
           json: (typeof statusCode === 'undefined') ? embed.success : embed.failed,
         };
 
-        Logger.info(`Sending request to ${url}`);
+        Logger.info(`Sending request to ${webhook.name}`);
         const response = await Promisefied.request(options);
-        if (response.res.statusCode === 204) Logger.success(`Successful sent with return of ${response.res.statusCode}`);
+        if (response.res.statusCode === 204) {
+          Logger.success(`Successful sent with return of ${response.res.statusCode}`);
+        }
         else {
           Logger.debug(response.res.statusCode);
           Logger.debug(util.inspect(response.body));
           console.log(util.inspect(anilistResponse, { depth: null, colors: true }));
         }
       }
+
       resolve();
     }
     catch (e) {
