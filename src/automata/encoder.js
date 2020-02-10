@@ -50,7 +50,7 @@ module.exports = Encoder = {
           await FFmpeg.changeContainer(tempPreppedFile, outputFile);
         }
         else {
-          const subStream = FFprobe.getSubStreamInfo(streams, payload);
+          const subStream = await FFprobe.getSubStreamInfo(streams, payload);
           Logger.info(subStream);
 
           try {

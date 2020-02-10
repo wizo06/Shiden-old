@@ -131,7 +131,7 @@ module.exports = Rclone = {
 
         // If folder not found in any source, reject
         if (!validSource) {
-          Logger.error(`No sources contained the folder, cancelling operation`);
+          Logger.error(`Folder not found`);
           reject(6);
           return;
         }
@@ -146,7 +146,7 @@ module.exports = Rclone = {
       }
       catch (e) {
         Logger.error(e);
-        reject(7);
+        reject();
       }
     });
   },
@@ -165,6 +165,15 @@ module.exports = Rclone = {
         const fullPathNoLastFolder = payload.folder.split('/').slice(0, -1).join('/');
         let lastFolder = payload.folder.split('/').pop();
         lastFolder = (lastFolder.endsWith('/')) ? lastFolder : lastFolder + '/';
+
+        // Escape special characters as documented here https://rclone.org/filtering/
+        lastFolder = lastFolder.replace('*', '\\*');
+        lastFolder = lastFolder.replace('?', '\\?');
+        lastFolder = lastFolder.replace('[', '\\[');
+        lastFolder = lastFolder.replace(']', '\\]');
+        lastFolder = lastFolder.replace('{', '\\{');
+        lastFolder = lastFolder.replace('}', '\\}');
+
         source = Paths.parseRclonePaths(source, fullPathNoLastFolder);
 
         command = `${Paths.rclonePath} lsf "${source}" --dirs-only --include "${lastFolder}" ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;

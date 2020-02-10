@@ -132,8 +132,6 @@ const getTypeOfFailure = statusCode => {
   if (statusCode === 3) return 'Download failed';
   if (statusCode === 4) return 'Hardsub failed';
   if (statusCode === 5) return 'Upload failed';
-  if (statusCode === 6) return 'Folder not found';
-  if (statusCode === 7) return 'Listing files in folder failed';
   return 'Unknown';
 };
 
@@ -149,13 +147,16 @@ const postToWebhook = (statusCode, embed) => {
 
         Logger.info(`Sending request to ${webhook.name}`);
         const response = await Promisefied.request(options);
-        if (response.res.statusCode === 204) Logger.success(`Successful sent with return of ${response.res.statusCode}`);
+        if (response.res.statusCode === 204) {
+          Logger.success(`Successful sent with return of ${response.res.statusCode}`);
+        }
         else {
           Logger.debug(response.res.statusCode);
           Logger.debug(util.inspect(response.body));
           console.log(util.inspect(anilistResponse, { depth: null, colors: true }));
         }
       }
+
       resolve();
     }
     catch (e) {

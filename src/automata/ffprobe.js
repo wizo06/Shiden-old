@@ -44,7 +44,7 @@ module.exports = FFprobe = {
       if (payload.audioIndex) {
         Logger.info(`Payload has specified audio index: ${payload.audioIndex}`);
         const audioStream = streams.filter(stream => stream.index == payload.audioIndex)[0];
-        if (audioStream.codec_type === 'audio') {
+        if (audioStream && audioStream.codec_type === 'audio') {
           return resolve(`-map 0:${payload.audioIndex} -acodec aac -ab 320k`);
         }
         else {
@@ -78,7 +78,7 @@ module.exports = FFprobe = {
       if (payload.videoIndex) {
         Logger.info(`Payload has specified video index: ${payload.videoIndex}`);
         const videoStream = streams.filter(stream => stream.index == payload.videoIndex)[0];
-        if (videoStream.codec_type === 'video') {
+        if (videoStream && videoStream.codec_type === 'video') {
           return resolve(`-map 0:${payload.videoIndex} -c:v copy`);
         }
         else {
@@ -117,21 +117,23 @@ module.exports = FFprobe = {
    * @return {{Object}} - Returns subtitle stream info
    */
   getSubStreamInfo: (streams, payload) => {
-    if (payload.subIndex) {
-      Logger.info(`Payload has specified subtitle index: ${payload.subIndex}`);
-      const payloadSpecifiedSubStream = streams.filter(stream => stream.index == payload.subIndex)[0];
-      if (payloadSpecifiedSubStream.codec_type === 'subtitle') {
-        return payloadSpecifiedSubStream;
+    return new Promise((resolve, reject) => {
+      if (payload.subIndex) {
+        Logger.info(`Payload has specified subtitle index: ${payload.subIndex}`);
+        const payloadSpecifiedSubStream = streams.filter(stream => stream.index == payload.subIndex)[0];
+        if (payloadSpecifiedSubStream && payloadSpecifiedSubStream.codec_type === 'subtitle') {
+          return resolve(payloadSpecifiedSubStream);
+        }
+        else {
+          Logger.error(`Stream with index: ${payload.subIndex} is not a subtitle stream or does not exist.`);
+          return reject();
+        }
       }
-      else {
-        Logger.error(`Stream with index: ${payload.subIndex} is not a subtitle stream or does not exist.`);
-        return 8;
-      }
-    }
 
-    Logger.info(`Subtitle index not specified in payload. Using first available subtitle stream.`);
-    const firstAvailableSubtitleStream = stream.filter(stream.codec_type === 'subtitle')[0];
-    return firstAvailableSubtitleStream;
+      Logger.info(`Subtitle index not specified in payload. Using first available subtitle stream.`);
+      const firstAvailableSubtitleStream = streams.filter(stream => stream.codec_type === 'subtitle')[0];
+      return resolve(firstAvailableSubtitleStream);
+    });
   },
 
 };
