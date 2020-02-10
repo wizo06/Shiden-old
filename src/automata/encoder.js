@@ -63,7 +63,7 @@ module.exports = Encoder = {
 
             // Step 4.2: Hardsub temp_prepped with -vf subtitles=sub.ass
             Logger.info(`Hardsubbing with text based subtitle`);
-            await FFmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
+            await FFmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile, payload);
           }
           catch (e) {
             try {
