@@ -10,7 +10,7 @@ const { exec } = require('child_process');
 const request = require('request');
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
 
 module.exports = Promisefied = {
   exec: (command, options) => {

@@ -5,14 +5,14 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import helpers
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
 
 // Import config
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
-const { remote } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
+const { remote } = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
-const SHOW='Beatless ~ ビートレス [anidb-13500]';
+const SHOW = 'Beatless ~ ビートレス [anidb-13500]';
 
 (async () => {
   try {

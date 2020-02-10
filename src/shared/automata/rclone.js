@@ -8,13 +8,13 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
-const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
-const { remote } = require(path.join(process.cwd(), 'src/utils/config.js'));
-const { flags } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
+const Temp = require(path.join(process.cwd(), 'src/shared/utils/temp.js'));
+const { remote } = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
+const { flags } = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
 module.exports = Rclone = {
   /**

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Entry point of Shiden. It's an ExpressJS app.
+ * @fileoverview An ExpressJS app that exposes routes and push payloads to queue.
  */
 
 // Import node modules
@@ -12,23 +12,19 @@ module.exports = DISCORD_BOT;
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
-const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const CONFIG = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
 // master will be set to TRUE if current git branch name is 'master'
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
 // Import routes
-const hardsubFilePost = require(path.join(process.cwd(), 'src/routes/hardsub/file/post.js'));
-const hardsubFolderPost = require(path.join(process.cwd(), 'src/routes/hardsub/folder/post.js'));
-const queueDelete = require(path.join(process.cwd(), 'src/routes/queue/delete.js'));
-const queueGet = require(path.join(process.cwd(), 'src/routes/queue/get.js'));
-const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
-
-// Import pipeline flow
-const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
+const hardsubFilePost = require(path.join(process.cwd(), 'src/queue/routes/hardsub/file/post.js'));
+const hardsubFolderPost = require(path.join(process.cwd(), 'src/queue/routes/hardsub/folder/post.js'));
+const queueDelete = require(path.join(process.cwd(), 'src/queue/routes/queue/delete.js'));
+const queueGet = require(path.join(process.cwd(), 'src/queue/routes/queue/get.js'));
+const catchAll = require(path.join(process.cwd(), 'src/queue/routes/catchAll.js'));
 
 // Create ExpressJS app
 const app = express();
@@ -61,13 +57,8 @@ app.listen(CONFIG.express.port, async () => {
       }
     }
 
-    await Temp.destroy();
-
     // If "--clean" flag is passed, remove queue file
     if (process.argv.slice(2).includes('--clean')) await Queue.removeFile();
-
-    // Start processing payloads in queue if there are leftovers
-    if (!(await Queue.isEmpty())) processNextPayload();
   }
   catch (e) {
     Logger.error(e);

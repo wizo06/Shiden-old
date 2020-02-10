@@ -7,8 +7,8 @@
 const path = require('path');
 
 // Import custom modules
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
 
 module.exports = Anilist = {
   query: showName => {

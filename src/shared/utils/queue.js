@@ -9,8 +9,8 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
 
 module.exports = Queue = {
   /**
@@ -121,12 +121,12 @@ module.exports = Queue = {
           resolve(false);
         }
         else {
-          Logger.debug(`Queue is empty`);
+          // Logger.debug(`Queue is empty`);
           resolve(true);
         }
       }
       catch (e) {
-        Logger.debug(`Queue file does not exist. Queue is empty.`);
+        // Logger.debug(`Queue file does not exist. Queue is empty.`);
         resolve(true);
       }
     });
@@ -181,13 +181,12 @@ module.exports = Queue = {
         const queue = Queue.readFile(queueFilePath);
         const filtered = queue.filter((queueItem, index) => {
           const queueItemIsFirstElement = index === 0;
-          const queueItemDoesNotContainSubstring = !queueItem.sourceFile.includes(payload.sourceFile);
+          const queueItemDoesNotContainSubstring = !queueItem.sourceFile.includes(payload.stringMatch);
           if (queueItemIsFirstElement || queueItemDoesNotContainSubstring) {
             return true; // Return true if item is first element OR does not match substring
           }
           else return false;
         });
-
         // If the filtered array has the same length as the original queue array
         // then it means no payload was removed.
         if (filtered.length === queue.length) return reject('Payload not found');

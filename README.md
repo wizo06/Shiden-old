@@ -18,15 +18,10 @@ It downloads from and uploads to remote/local storages using **rclone**.
     - GET
 
 # Features
-- Queue system. First come first serve basis.
-- HTTP response with the appropriate error status code and message.
 - Able to process the following scenarios:
   - Videos that don't have subtitle stream: Simply change container to MP4
   - Videos that have Text based subtitle stream: Use `-vf subtitle=sub.ass`
   - Videos that have Bitmap based subtitle stream: Use `-filter_complex overlay`
-  - **Note**: If the file has both text based and bitmap based subtitle streams, text based stream will be prioritized over bitmap based
-- Option to specify stream index for video, audio and/or subtitle
-- Discord notification with webhooks
 
 # Requirements
 - x86_64 CPU architecture
@@ -39,22 +34,28 @@ It downloads from and uploads to remote/local storages using **rclone**.
 
 # Getting Started
 
-## Configure
-1. Run 
+## 1. Configure
+
+  1.1 Run 
+  ```bash
+  ./prepare.sh
+  ```
+
+  1.2 Make the necessary changes in those `conf/user_*` files.
+
+## 2. Start up the ExpressJS app
 ```bash
-./prepare.sh
+npm run express
 ```
 
-2. Make the necessary changes in those `conf/user_*` files.
-
-## Start up Shiden
+Alternatively, if you want to remove any leftover payload in the queue.
 ```bash
-npm start
+npm run express -- --clean
 ```
 
-Alternatively, if you want to start up Shiden and remove any leftover payload in the queue.
+## 3. Start up the worker
 ```bash
-npm start -- --clean
+npm run worker
 ```
 
 # Routes

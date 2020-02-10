@@ -10,12 +10,12 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const FFprobe = require(path.join(process.cwd(), 'src/automata/ffprobe.js'));
-const FFmpeg = require(path.join(process.cwd(), 'src/automata/ffmpeg.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Temp = require(path.join(process.cwd(), 'src/shared/utils/temp.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const FFprobe = require(path.join(process.cwd(), 'src/shared/automata/ffprobe.js'));
+const FFmpeg = require(path.join(process.cwd(), 'src/shared/automata/ffmpeg.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
 
 module.exports = Encoder = {
   encode: () => {

@@ -9,10 +9,10 @@ const fs = require('fs');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const FFprobe = require(path.join(process.cwd(), 'src/automata/ffprobe.js'));
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
+const FFprobe = require(path.join(process.cwd(), 'src/shared/automata/ffprobe.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
 
 // master will be set to TRUE if current git branch name is 'master'
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
