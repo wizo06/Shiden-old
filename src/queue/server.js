@@ -20,11 +20,11 @@ const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);
 
 // Import routes
-const hardsubFilePost = require(path.join(process.cwd(), 'src/routes/hardsub/file/post.js'));
-const hardsubFolderPost = require(path.join(process.cwd(), 'src/routes/hardsub/folder/post.js'));
-const queueDelete = require(path.join(process.cwd(), 'src/routes/queue/delete.js'));
-const queueGet = require(path.join(process.cwd(), 'src/routes/queue/get.js'));
-const catchAll = require(path.join(process.cwd(), 'src/routes/catchAll.js'));
+const hardsubFilePost = require(path.join(process.cwd(), 'src/queue/routes/hardsub/file/post.js'));
+const hardsubFolderPost = require(path.join(process.cwd(), 'src/queue/routes/hardsub/folder/post.js'));
+const queueDelete = require(path.join(process.cwd(), 'src/queue/routes/queue/delete.js'));
+const queueGet = require(path.join(process.cwd(), 'src/queue/routes/queue/get.js'));
+const catchAll = require(path.join(process.cwd(), 'src/queue/routes/catchAll.js'));
 
 // Create ExpressJS app
 const app = express();
