@@ -10,9 +10,6 @@ const Rclone = require(path.join(process.cwd(), 'src/automata/rclone.js'));
 const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
 const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
 
-// Import pipeline flow
-const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
-
 module.exports = router.post('/hardsub/folder', async (req, res) => {
   try {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
@@ -38,26 +35,12 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
 
     res.status(209).send('Payload accepted');
 
-    if (await Queue.isEmpty()) {
-      // If queue is empty, load all files then start processing
-      for (file of arrOfFiles) {
-        Logger.success(`Loaded file: ${file}`);
+    for (file of arrOfFiles) {
+      Logger.success(`Loaded file: ${file}`);
 
-        const filePayload = Object.assign({}, folderPayload);
-        filePayload.sourceFile = path.join(folderPayload.sourceFolder, file);
-        await Queue.push(filePayload);
-      }
-      processNextPayload();
-    }
-    else {
-      // Otherwise, simply load all files
-      for (file of arrOfFiles) {
-        Logger.success(`Loaded file: ${file}`);
-
-        const filePayload = Object.assign({}, folderPayload);
-        filePayload.sourceFile = path.join(folderPayload.sourceFolder, file);
-        await Queue.push(filePayload);
-      }
+      const filePayload = Object.assign({}, folderPayload);
+      filePayload.sourceFile = path.join(folderPayload.sourceFolder, file);
+      await Queue.push(filePayload);
     }
   }
   catch (status) {
