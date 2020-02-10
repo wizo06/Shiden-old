@@ -35,8 +35,6 @@ _error () {
 
 _info "POST /hardsub/file + No authorization"
 http_status_code=$(curl -i -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{ "show": "Fate Kaleid", "file": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
   http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "401" ]; then
   _success "401 returned"
@@ -47,7 +45,6 @@ fi
 _info "POST /hardsub/file + No Content-Type"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
-  -d '{ "show": "Fate Kaleid", "file": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
   http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "415" ]; then
   _success "415 returned"
@@ -59,7 +56,7 @@ _info "POST /hardsub/file + SyntaxError JSON body"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "Fate Kaleid" "file": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
+  -d '' \
   http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "400" ]; then
   _success "400 returned"
@@ -71,7 +68,7 @@ _info "POST /hardsub/file + Incomplete JSON body"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "file": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
+  -d '{ "sourceFile": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
   http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "400" ]; then
   _success "400 returned"
@@ -83,7 +80,7 @@ _info "POST /hardsub/file"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "Fate Kaleid", "file": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv" }' \
+  -d '{ "sourceFile": "Premiered/Fate Kaleid/[HorribleSubs] Fate Kaleid Liner PRISMA ILLYA 3rei!! - 01 [1080p].mkv", "destFolder": "Premiered [Hardsub]/Fate Kaleid" }' \
   http://localhost:64000/hardsub/file | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
@@ -95,7 +92,7 @@ _info "POST /hardsub/folder"
 http_status_code=$(curl -i -s -X POST \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "Grand Blue", "file": "Premiered/Grand Blue" }' \
+  -d '{ "sourceFolder": "Premiered/Grand Blue", "destFolder": "Premiered [Hardsub]/Grand Blue" }' \
   http://localhost:64000/hardsub/folder | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
@@ -113,11 +110,11 @@ else
   _error "200 not returned"
 fi
 
-_info "DELETE /queue + Invalid file name"
+_info "DELETE /queue + string no match"
 http_status_code=$(curl -i -s -X DELETE \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "Grand Blue", "file": "Premiered/Grand Blue/Grand Blue - 00 [1080p].mkv" }' \
+  -d '{ "stringMatch": "Premiered/Grand Blue/Grand Blue - 00 [1080p].mkv" }' \
   http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "404" ]; then
   _success "404 returned"
@@ -131,19 +128,7 @@ _info "DELETE /queue"
 http_status_code=$(curl -i -s -X DELETE \
   -H "Authorization: authorization_key_1" \
   -H "Content-Type: application/json" \
-  -d '{ "show": "Grand Blue", "file": "Premiered/Grand Blue/Grand Blue - 01 [1080p].mkv" }' \
-  http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
-if [ "${http_status_code}" == "209" ]; then
-  _success "209 returned"
-else
-  _error "209 not returned"
-fi
-
-_info "DELETE /queue"
-http_status_code=$(curl -i -s -X DELETE \
-  -H "Authorization: authorization_key_1" \
-  -H "Content-Type: application/json" \
-  -d '{ "show": "Grand Blue", "file": "Premiered/Grand Blue" }' \
+  -d '{ "stringMatch": "Grand Blue" }' \
   http://localhost:64000/queue | grep "HTTP" | cut -d " " -f 2)
 if [ "${http_status_code}" == "209" ]; then
   _success "209 returned"
