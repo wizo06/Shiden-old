@@ -101,13 +101,17 @@ module.exports = FFmpeg = {
    * @param {{string}} assFile - Path to ass file
    * @param {{string}} assetsFolder - Path to assets folder
    * @param {{string}} outputFile - Path to output file
+   * @param {{Object}} payload - Incoming payload in JSON format
    * @return {{void}}
    */
-  hardsubText: (tempPreppedFile, assFile, assetsFolder, outputFile) => {
+  hardsubText: (tempPreppedFile, assFile, assetsFolder, outputFile, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
+        // Defaults to NotoSansJP-Medium fontstyle if not provided in payload
+        const fontName = (payload.fontStyle) ? payload.fontStyle : 'NotoSansJP-Medium';
+
         let command = [`${Paths.ffmpegPath} -i "${tempPreppedFile}"`];
-        command.push(`-vf subtitles=${assFile}:force_style='FontName=NotoSansJP-Medium:fontsdir=${assetsFolder}'`);
+        command.push(`-vf subtitles=${assFile}:force_style='FontName=${fontName}:fontsdir=${assetsFolder}'`);
         command.push(`-strict -2 -y`);
         command.push(master ? '' : '-t 300');
         command.push(`"${outputFile}"`);

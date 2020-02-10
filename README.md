@@ -81,7 +81,9 @@ npm start -- --clean
 | videoIndex | No | Number | First available | Stream index number that will be used for video |
 | audioIndex | No | Number | First available | Stream index number that will be used for audio |
 | subIndex | No | Number | First available | Stream index number that will be used for subtitle |
+| fontStyle | No | String | NotoSansJP-Medium | Font style used for text based hardsub |
 
+[List of available font styles](https://github.com/wizo06/Shiden/tree/master/assets)
 
 ## `/hardsub/folder`
 
@@ -105,6 +107,9 @@ npm start -- --clean
 | videoIndex | No | Number | First available | Stream index number that will be used for video |
 | audioIndex | No | Number | First available | Stream index number that will be used for audio |
 | subIndex | No | Number | First available | Stream index number that will be used for subtitle |
+| fontStyle | No | String | NotoSansJP-Medium | Font style used for text based hardsub |
+
+[List of available font styles](https://github.com/wizo06/Shiden/tree/master/assets)
 
 ## `/queue`
 
