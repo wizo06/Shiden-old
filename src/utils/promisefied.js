@@ -43,7 +43,7 @@ module.exports = Promisefied = {
         resolve(JSON.parse(string));
       }
       catch (e) {
-        reject(e.stack.split('\n')[0]);
+        reject('SyntaxError');
       }
     });
   },

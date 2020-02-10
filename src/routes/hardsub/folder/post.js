@@ -14,18 +14,21 @@ const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js')
 // Import pipeline flow
 const processNextPayload = require(path.join(process.cwd(), 'src/pipeline.js'));
 
-const endpoint = __dirname.replace(path.join(process.cwd(), 'src/routes'), '');
-
-module.exports = router.post(endpoint, async (req, res) => {
+module.exports = router.post('/hardsub/folder', async (req, res) => {
   try {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
     const payload = await Promisefied.jsonParse(req.body);
-    if (!(payload.folder)) return res.status(400).send('JSON body must have "folder"');
+
+    const requiredKeys = ['folder'];
+    const payloadHasAllRequiredKeys = requiredKeys.every(element => typeof payload[element] !== 'undefined');
+    if (!(payloadHasAllRequiredKeys)) return res.status(400).send('Missing required key');
 
     res.status(209).send('Payload accepted');
 
-    Logger.success(`Loaded folder: ${payload.folder}`);
+    for ([key, value] of Object.entries(payload)) {
+      Logger.success(`Loaded ${key}: ${value}`);
+    }
 
     const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
 
@@ -70,7 +73,7 @@ module.exports = router.post(endpoint, async (req, res) => {
       Notification.send(status);
       return;
     }
-    if (status.includes('SyntaxError')) return res.status(400).send(status);
+    if (e === 'SyntaxError') return res.status(400).send(status);
     else return res.status(500).send('Unknown error');
   }
 });

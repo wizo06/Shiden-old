@@ -8,14 +8,14 @@ It downloads from and uploads to remote/local storages using **rclone**.
 - [Getting Started](#getting-started)
   - [Configure](#configure)
   - [Start up Shiden](#start-up-shiden)
-- [Usage](#usage)
-  - [GET](#GET)
-    - /queue
-  - [POST](#POST)
-    - /hardsub/file
-    - /hardsub/folder
-  - [DELETE](#DELETE)
-    - /queue
+- [Routes](#routes)
+  - [/hardsub/file](#hardsubfile)
+    - POST
+  - [/hardsub/folder](#hardsubfolder)
+    - POST
+  - [/queue](#queue)
+    - DELETE
+    - GET
 
 # Features
 - Queue system. First come first serve basis.
@@ -57,28 +57,12 @@ Alternatively, if you want to start up Shiden and remove any leftover payload in
 ```bash
 npm start -- --clean
 ```
-**Note** the `--` after `npm start` is necessary. This is how you pass arguments to `npm`. If your `package.json` looks like this:
-```json
-"scripts": {
-  "start": "node src/server.js"
-}
-```
-then `node src/server.js --clean` => `npm start -- --clean`.
 
-- Here is the [pull request](https://github.com/npm/npm/pull/5518) for this feature.
-- [Official documentation](https://docs.npmjs.com/cli/run-script) of this feature.
-- Or run `npm help run` to see the documentation in the terminal.
+# Routes
 
-# Usage
+## `/hardsub/file`
 
-## GET
-
-### `/queue`
-  - Returns the current queue in an array.
-
-## POST
-
-### `/hardsub/file`
+### POST
   - Queue up **one file**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
@@ -102,7 +86,9 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | sub_index | No | Stream index number that will be used for subtitle |
 
 
-### `/hardsub/folder`
+## `/hardsub/folder`
+
+### POST
   - Queue up **all files of a folder**.
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
@@ -125,9 +111,9 @@ then `node src/server.js --clean` => `npm start -- --clean`.
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
 
-## DELETE
+## `/queue`
 
-### `/queue`
+### DELETE
   - Delete **all payloads** in the queue that **matches the provided string** **EXCEPT** if the payload is **first element in queue**
   - `Content-Type` must be `application/json`
   - `Authentication` must have a valid token (from `user_auth.yml`)
@@ -170,3 +156,6 @@ Grand Blue - 01 [1080p].mkv
 Grand Blue - 02 [1080p].mkv
 ```
 **NOTE** that `Grand Blue - 03 [1080p].mkv` will not be deleted in this case because it is the first element in the queue.
+
+### GET
+  - Returns the current queue in an array.
