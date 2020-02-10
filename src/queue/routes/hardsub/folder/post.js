@@ -48,7 +48,7 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
     if (status === 6) {
       return res.status(406).send(`Folder not found`);
     }
-    if (e === 'SyntaxError') return res.status(400).send(status);
+    if (status === 'SyntaxError') return res.status(400).send(status);
     else return res.status(500).send('Unknown error');
   }
 });
