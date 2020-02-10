@@ -76,13 +76,13 @@ npm start -- --clean
   }
   ```  
 
-| Field | Required | Description |
-| --- | --- | --- |
-| file | Yes | Full path of the file to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
-| showName | No | Used for metadata when sending out notifications |
-| videoIndex | No | Stream index number that will be used for video |
-| audioIndex | No | Stream index number that will be used for audio |
-| subIndex | No | Stream index number that will be used for subtitle |
+| Field | Required | Default | Description |
+| --- | --- | --- | --- |
+| file | Yes | | Full path of the file to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
+| showName | No | | Used for metadata when sending out notifications |
+| videoIndex | No | First available video stream | Stream index number that will be used for video |
+| audioIndex | No | First available audio stream | Stream index number that will be used for audio |
+| subIndex | No | First available subtitle stream | Stream index number that will be used for subtitle |
 
 
 ## `/hardsub/folder`
@@ -102,13 +102,13 @@ npm start -- --clean
   }
   ```  
 
-| Field | Required | Description |
-| --- | --- | --- |
-| folder | Yes | Full path of the folder to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
-| showName | No | Used for metadata when sending out notifications |
-| videoIndex | No | Stream index number that will be used for video |
-| audioIndex | No | Stream index number that will be used for audio |
-| subIndex | No | Stream index number that will be used for subtitle |
+| Field | Required | Default | Description |
+| --- | --- | --- | --- |
+| folder | Yes | | Full path of the folder to be hardsubbed. **The first folder of the path will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
+| showName | No | | Used for metadata when sending out notifications |
+| videoIndex | No | First available video stream | Stream index number that will be used for video |
+| audioIndex | No | First available audio stream | Stream index number that will be used for audio |
+| subIndex | No | First available subtitle stream | Stream index number that will be used for subtitle |
 
 ## `/queue`
 
