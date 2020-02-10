@@ -42,14 +42,14 @@ module.exports = Ffprobe = {
    */
   getAudioFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
-      if (payload.audio_index) {
-        Logger.info(`Payload has specified audio stream index: ${payload.audio_index}`);
-        const audioStream = streams.filter(stream => stream.index == payload.audio_index)[0];
+      if (payload.audioIndex) {
+        Logger.info(`Payload has specified audio stream index: ${payload.audioIndex}`);
+        const audioStream = streams.filter(stream => stream.index == payload.audioIndex)[0];
         if (audioStream.codec_type === 'audio') {
-          resolve(`-map 0:${payload.audio_index} -acodec aac -ab 320k`);
+          resolve(`-map 0:${payload.audioIndex} -acodec aac -ab 320k`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.audio_index} is not an audio stream.`);
+          Logger.error(`Stream with index: ${payload.audioIndex} is not an audio stream.`);
           reject();
         }
       }
@@ -83,14 +83,14 @@ module.exports = Ffprobe = {
   */
   getVideoFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
-      if (payload.video_index) {
-        Logger.info(`Payload has specified video stream index: ${payload.video_index}`);
-        const videoStream = streams.filter(stream => stream.index == payload.video_index)[0];
+      if (payload.videoIndex) {
+        Logger.info(`Payload has specified video stream index: ${payload.videoIndex}`);
+        const videoStream = streams.filter(stream => stream.index == payload.videoIndex)[0];
         if (videoStream.codec_type === 'video') {
-          resolve(`-map 0:${payload.video_index} -c:v copy`);
+          resolve(`-map 0:${payload.videoIndex} -c:v copy`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.video_index} is not a video stream.`);
+          Logger.error(`Stream with index: ${payload.videoIndex} is not a video stream.`);
           reject();
         }
       }
@@ -126,10 +126,10 @@ module.exports = Ffprobe = {
    * @return {{codecBase: string, index: number}} - Returns "text" or "bitmap" in codecBase and the index of subtitle stream
    */
   getSubStream: (streams, payload) => {
-    if (payload.sub_index) {
-      Logger.info(`Payload has specified subtitle index: ${payload.sub_index}`);
+    if (payload.subIndex) {
+      Logger.info(`Payload has specified subtitle index: ${payload.subIndex}`);
       let codecBase = 'default';
-      const subStream = streams.filter(stream => stream.index == payload.sub_index)[0];
+      const subStream = streams.filter(stream => stream.index == payload.subIndex)[0];
       if (subStream) {
         if (subStream.codec_name === 'srt' || subStream.codec_name === 'ass') {
           codecBase = 'text';
@@ -138,14 +138,14 @@ module.exports = Ffprobe = {
           codecBase = 'bitmap';
         }
         else {
-          Logger.error(`Stream with index: ${payload.sub_index} is neither text or bitmap based.`);
+          Logger.error(`Stream with index: ${payload.subIndex} is neither text or bitmap based.`);
           console.log(subStream);
         }
       }
       else {
-        Logger.error(`Stream with index: ${payload.sub_index} does not exist.`);
+        Logger.error(`Stream with index: ${payload.subIndex} does not exist.`);
       }
-      return { codecBase, index: payload.sub_index };
+      return { codecBase, index: payload.subIndex };
     }
 
     let codecBase = 'default';

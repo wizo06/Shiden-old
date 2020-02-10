@@ -71,9 +71,9 @@ npm start -- --clean
   {
       "file": "Airing/SHOW NAME/SEASON 1/FILE NAME.MKV",
       "showName": "SHOW NAME",
-      "video_index": 0,
-      "audio_index": 1,
-      "sub_index": 2
+      "videoIndex": 0,
+      "audioIndex": 1,
+      "subIndex": 2
   }
   ```  
 
@@ -81,9 +81,9 @@ npm start -- --clean
 | --- | --- | --- |
 | file | Yes | Full path of the file to be hardsubbed. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
 | showName | No | Used for metadata when sending out notifications |
-| video_index | No | Stream index number that will be used for video |
-| audio_index | No | Stream index number that will be used for audio |
-| sub_index | No | Stream index number that will be used for subtitle |
+| videoIndex | No | Stream index number that will be used for video |
+| audioIndex | No | Stream index number that will be used for audio |
+| subIndex | No | Stream index number that will be used for subtitle |
 
 
 ## `/hardsub/folder`
@@ -97,9 +97,9 @@ npm start -- --clean
   {
       "folder": "Airing/SHOW NAME/SEASON 1",
       "showName": "SHOW NAME",
-      "video_index": 0,
-      "audio_index": 1,
-      "sub_index": 2
+      "videoIndex": 0,
+      "audioIndex": 1,
+      "subIndex": 2
   }
   ```  
 
@@ -107,9 +107,9 @@ npm start -- --clean
 | --- | --- | --- |
 | folder | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
 | showName | No | Used for metadata when sending out notifications |
-| video_index | No | Stream index number that will be used for video |
-| audio_index | No | Stream index number that will be used for audio |
-| sub_index | No | Stream index number that will be used for subtitle |
+| videoIndex | No | Stream index number that will be used for video |
+| audioIndex | No | Stream index number that will be used for audio |
+| subIndex | No | Stream index number that will be used for subtitle |
 
 ## `/queue`
 

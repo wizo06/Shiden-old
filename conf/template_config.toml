@@ -4,7 +4,6 @@
 [remote]
 downloadSource = ["source1:", "source2:", "source3:"]
 uploadDestination = ["destination1:", "destination2:", "destination3:"]
-plex = "plex:" # <= This is not essential for the core functionalities of Shiden. Can be omitted.
 
 ############################################
 
@@ -25,10 +24,6 @@ token = ""
 # Flags when running child processes
 [flags]
 rclone = "--progress --stats-one-line --stats 1s --bwlimit 20M -v --config conf/rclone.conf"
-
-# List of preferred languages when choosing subtitle stream. Order MATTERS.
-[subtitle]
-language = ["eng", "en", "jpn", "jp"]
 
 # ExpressJS settings
 [express]
