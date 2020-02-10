@@ -10,13 +10,13 @@ const util = require('util');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
-const Kitsu = require(path.join(process.cwd(), 'src/automata/kitsu.js'));
-const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/automata/animeOfflineDatabase.js'));
-const { notification } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
+const Anilist = require(path.join(process.cwd(), 'src/shared/automata/anilist.js'));
+const Kitsu = require(path.join(process.cwd(), 'src/shared/automata/kitsu.js'));
+const AnimeOfflineDatabase = require(path.join(process.cwd(), 'src/shared/automata/animeOfflineDatabase.js'));
+const { notification } = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
 const send = statusCode => {
   return new Promise(async (resolve, reject) => {

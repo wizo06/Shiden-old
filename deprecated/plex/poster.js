@@ -10,14 +10,14 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Anilist = require(path.join(process.cwd(), 'src/automata/anilist.js'));
+const Anilist = require(path.join(process.cwd(), 'src/shared/automata/anilist.js'));
 
 // Import utils
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
-const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
-const { remote } = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
+const Temp = require(path.join(process.cwd(), 'src/shared/utils/temp.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
+const { remote } = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
 const REMOTE = (process.argv[2]) ? process.argv[2] : `${remote.plex}Pending`;
 

@@ -12,12 +12,12 @@ const path = require('path');
 const util = require('util');
 
 // Import custom modules
-const Encoder = require(path.join(process.cwd(), 'src/automata/encoder.js'));
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Notification = require(path.join(process.cwd(), 'src/automata/notification.js'));
-const Rclone = require(path.join(process.cwd(), 'src/automata/rclone.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const Temp = require(path.join(process.cwd(), 'src/utils/temp.js'));
+const Encoder = require(path.join(process.cwd(), 'src/shared/automata/encoder.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Notification = require(path.join(process.cwd(), 'src/shared/automata/notification.js'));
+const Rclone = require(path.join(process.cwd(), 'src/shared/automata/rclone.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const Temp = require(path.join(process.cwd(), 'src/shared/utils/temp.js'));
 
 const processNextPayload = () => {
   return new Promise(async (resolve, reject) => {

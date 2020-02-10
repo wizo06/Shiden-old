@@ -11,7 +11,7 @@
 const path = require('path');
 
 // Import custom modules
-const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js'));
+const Promisefied = require(path.join(process.cwd(), 'src/shared/utils/promisefied.js'));
 
 module.exports = AnimeOfflineDatabase = {
   /**

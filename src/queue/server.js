@@ -12,9 +12,9 @@ module.exports = DISCORD_BOT;
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Queue = require(path.join(process.cwd(), 'src/utils/queue.js'));
-const CONFIG = require(path.join(process.cwd(), 'src/utils/config.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Queue = require(path.join(process.cwd(), 'src/shared/utils/queue.js'));
+const CONFIG = require(path.join(process.cwd(), 'src/shared/utils/config.js'));
 
 // master will be set to TRUE if current git branch name is 'master'
 const master = ('master' === fs.readFileSync(path.join(process.cwd(), '.git/HEAD'), { encoding: 'utf8' }).match(/ref: refs\/heads\/([^\n]+)/)[1]);

@@ -8,8 +8,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
 
 module.exports = Temp = {
   /**

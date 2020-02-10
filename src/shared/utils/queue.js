@@ -9,8 +9,8 @@ const path = require('path');
 require('toml-require').install({ toml: require('toml') });
 
 // Import custom modules
-const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
-const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
+const Logger = require(path.join(process.cwd(), 'src/shared/utils/logger.js'));
+const Paths = require(path.join(process.cwd(), 'src/shared/utils/paths.js'));
 
 module.exports = Queue = {
   /**
