@@ -30,7 +30,7 @@ module.exports = Encoder = {
         const tempFile = path.join(tempPath, `temp${ext}`);
         const tempPreppedFile = path.join(tempPath, `temp_prepped${ext}`);
         const assFile = path.join(tempPath, `sub.ass`);
-        const outputFile = path.join(tempPath, fileName).replace(ext, '.mp4');
+        const outputFile = path.join(tempPath, payload.destFile);
 
         // Step 1: Rename file to temp
         Logger.info(`Renaming file to ${path.basename(tempFile)}`);

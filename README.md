@@ -69,7 +69,7 @@ npm start -- --clean
   ```json
   {
       "sourceFile": "TODO/FILE NAME.MKV",
-      "destFile": "DONE/FILE NAME.MP4",
+      "destFile": "DONE/FILE NAME.MOV",
   }
   ```  
 
@@ -100,7 +100,7 @@ npm start -- --clean
 | Field | Required | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | sourceFolder | Yes | String | | Full path of the source folder in the remote storage that rclone will download from |
-| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to |
+| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to. File name extension will always be `.mp4` |
 | showName | No | String | | Name of the show used for metadata when sending out notifications |
 | videoIndex | No | Number | First available | Stream index number that will be used for video |
 | audioIndex | No | Number | First available | Stream index number that will be used for audio |

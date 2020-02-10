@@ -28,7 +28,7 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
     }
 
     // Remove trailing slash
-    folderPayload.folder = folderPayload.folder.replace(/\/$/, '');
+    folderPayload.sourceFolder = folderPayload.sourceFolder.replace(/\/$/, '');
     const arrOfFiles = await Rclone.getListOfEpisodes(folderPayload);
 
     if (!arrOfFiles[0]) {
@@ -43,8 +43,11 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
       for (episode of arrOfFiles) {
         Logger.success(`Loaded file: ${episode}`);
 
+        const ext = path.extname(episode);
+
         const filePayload = Object.assign({}, folderPayload);
-        filePayload.file = path.join(folderPayload.folder, episode);
+        filePayload.sourceFile = path.join(folderPayload.sourceFolder, episode);
+        filePayload.destFile = path.join(folderPayload.destFolder, episode.replace(ext, '.mp4'));
         await Queue.push(filePayload);
       }
       processNextPayload();
@@ -54,8 +57,11 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
       for (episode of arrOfFiles) {
         Logger.success(`Loaded file: ${episode}`);
 
+        const ext = path.extname(episode);
+
         const filePayload = Object.assign({}, folderPayload);
-        filePayload.file = path.join(folderPayload.folder, episode);
+        filePayload.sourceFile = path.join(folderPayload.sourceFolder, episode);
+        filePayload.destFile = path.join(folderPayload.destFolder, episode.replace(ext, '.mp4'));
         await Queue.push(filePayload);
       }
     }

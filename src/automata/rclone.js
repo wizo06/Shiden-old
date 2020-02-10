@@ -133,7 +133,7 @@ module.exports = Rclone = {
           return;
         }
 
-        const source = Paths.parseRclonePaths(validSource, payload.folder);
+        const source = Paths.parseRclonePaths(validSource, payload.sourceFolder);
 
         Logger.info(`Getting list of episodes from ${source}`);
         const command = `${Paths.rclonePath} lsf "${source}" --files-only -R ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
@@ -159,8 +159,8 @@ module.exports = Rclone = {
       try {
         Logger.info(`Checking for folder in ${source}`);
 
-        const fullPathNoLastFolder = payload.folder.split('/').slice(0, -1).join('/');
-        let lastFolder = payload.folder.split('/').pop();
+        const fullPathNoLastFolder = payload.sourceFolder.split('/').slice(0, -1).join('/');
+        let lastFolder = payload.sourceFolder.split('/').pop();
         lastFolder = (lastFolder.endsWith('/')) ? lastFolder : lastFolder + '/';
 
         // Escape special characters as documented here https://rclone.org/filtering/
