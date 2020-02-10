@@ -13,7 +13,7 @@ const Promisefied = require(path.join(process.cwd(), 'src/utils/promisefied.js')
 const Logger = require(path.join(process.cwd(), 'src/utils/logger.js'));
 const Paths = require(path.join(process.cwd(), 'src/utils/paths.js'));
 
-module.exports = Ffprobe = {
+module.exports = FFprobe = {
   /**
    * FFprobe the temp file and return stream info in an array
    * @param {{string}} tempFile - Path to temp file
