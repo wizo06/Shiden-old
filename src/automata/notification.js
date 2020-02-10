@@ -75,7 +75,7 @@ const buildEmbeds = (anilistResponse, kitsuResponse, aniDBID, statusCode, payloa
     const successEmbed = {
       embeds: [
         {
-          title: path.basename(payload.destFile),
+          title: path.basename(payload.sourceFile),
           timestamp: (new Date()).toISOString(),
           color: purple,
           footer: {
@@ -108,7 +108,7 @@ const buildEmbeds = (anilistResponse, kitsuResponse, aniDBID, statusCode, payloa
   const successEmbedNoMetadata = {
     embeds: [
       {
-        title: path.basename(payload.destFile),
+        title: path.basename(payload.sourceFile),
         timestamp: (new Date()).toISOString(),
         color: purple,
         image: {

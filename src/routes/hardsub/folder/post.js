@@ -29,7 +29,7 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
 
     // Remove trailing slash
     folderPayload.sourceFolder = folderPayload.sourceFolder.replace(/\/$/, '');
-    const arrOfFiles = await Rclone.getListOfEpisodes(folderPayload);
+    const arrOfFiles = await Rclone.getListOfFiles(folderPayload);
 
     if (!arrOfFiles[0]) {
       Logger.error('Folder is empty');
@@ -39,29 +39,23 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
     res.status(209).send('Payload accepted');
 
     if (await Queue.isEmpty()) {
-      // If queue is empty, load all episodes then start processing
-      for (episode of arrOfFiles) {
-        Logger.success(`Loaded file: ${episode}`);
-
-        const ext = path.extname(episode);
+      // If queue is empty, load all files then start processing
+      for (file of arrOfFiles) {
+        Logger.success(`Loaded file: ${file}`);
 
         const filePayload = Object.assign({}, folderPayload);
-        filePayload.sourceFile = path.join(folderPayload.sourceFolder, episode);
-        filePayload.destFile = path.join(folderPayload.destFolder, episode.replace(ext, '.mp4'));
+        filePayload.sourceFile = path.join(folderPayload.sourceFolder, file);
         await Queue.push(filePayload);
       }
       processNextPayload();
     }
     else {
-      // Otherwise, simply load all episodes
-      for (episode of arrOfFiles) {
-        Logger.success(`Loaded file: ${episode}`);
-
-        const ext = path.extname(episode);
+      // Otherwise, simply load all files
+      for (file of arrOfFiles) {
+        Logger.success(`Loaded file: ${file}`);
 
         const filePayload = Object.assign({}, folderPayload);
-        filePayload.sourceFile = path.join(folderPayload.sourceFolder, episode);
-        filePayload.destFile = path.join(folderPayload.destFolder, episode.replace(ext, '.mp4'));
+        filePayload.sourceFile = path.join(folderPayload.sourceFolder, file);
         await Queue.push(filePayload);
       }
     }

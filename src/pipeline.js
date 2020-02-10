@@ -30,17 +30,17 @@ module.exports = processNextPayload = async () => {
     console.log(util.inspect(await Queue.getFirst(), { colors: true }));
 
     // Step 1: Download the file
-    Logger.info('[1/4] Downloading episode file...');
+    Logger.info('[1/4] Downloading file...');
     if (CONFIG.discord_bot.token) await DISCORD_BOT.user.setActivity('download', { type: 'PLAYING' });
     await Rclone.download();
 
     // Step 2: Hardsub the file
-    Logger.info('[2/4] Hardsubbing episode file...');
+    Logger.info('[2/4] Hardsubbing file...');
     if (CONFIG.discord_bot.token) await DISCORD_BOT.user.setActivity('hardsub', { type: 'PLAYING' });
     await Encoder.encode();
 
     // Step 3: Upload the file
-    Logger.info('[3/4] Uploading episode file...');
+    Logger.info('[3/4] Uploading file...');
     if (CONFIG.discord_bot.token) await DISCORD_BOT.user.setActivity('upload', { type: 'PLAYING' });
     await Rclone.upload();
 

@@ -23,10 +23,10 @@ module.exports = Rclone = {
    * @param {{Object}} payload - Incoming payload in JSON format
    * @return {{boolean}}
    */
-  checkEpisodeExists: (source, payload) => {
+  checkFileExists: (source, payload) => {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.info(`Checking for episode in ${source}`);
+        Logger.info(`Checking for file in ${source}`);
 
         source = Paths.parseRclonePaths(source, payload.sourceFile);
 
@@ -35,7 +35,7 @@ module.exports = Rclone = {
         resolve(true);
       }
       catch (e) {
-        Logger.error(e);
+        Logger.error(`File not found in ${source}`);
         resolve(false);
       }
     });
@@ -51,14 +51,14 @@ module.exports = Rclone = {
         const payload = await Queue.getFirst();
         let validSource = false;
         for (src of remote.downloadSource) {
-          if (await Rclone.checkEpisodeExists(src, payload)) {
+          if (await Rclone.checkFileExists(src, payload)) {
             Logger.success(`Found file in ${src}`);
             validSource = src;
             break;
           }
         }
 
-        // If episode not found in any source, reject
+        // If file not found in any source, reject
         if (!validSource) {
           Logger.error(`No sources contained the file, cancelling operation`);
           reject(3);
@@ -90,13 +90,14 @@ module.exports = Rclone = {
       try {
         const payload = await Queue.getFirst();
         const tempPath = await Temp.getTempFolderPath();
-        const source = path.join(tempPath, path.basename(payload.destFile));
+        const ext = path.extname(payload.sourceFile);
+        const source = path.join(tempPath, path.basename(payload.sourceFile.replace(ext, '.mp4')));
 
         for (dest of remote.uploadDestination) {
-          const destination = Paths.parseRclonePaths(dest, payload.destFile);
+          const destination = Paths.parseRclonePaths(dest, payload.destFolder);
           Logger.info(`Uploading to ${destination}`);
 
-          const command = `${Paths.rclonePath} copyto "${source}" "${destination}" ${flags.rclone}`;
+          const command = `${Paths.rclonePath} copy "${source}" "${destination}" ${flags.rclone}`;
           await Promisefied.exec(command);
           Logger.success(`Upload completed`);
         }
@@ -110,11 +111,11 @@ module.exports = Rclone = {
   },
 
   /**
-   * Get the list of episodes of a folder and return them in an array
+   * Get the list of files of a folder and return them in an array
    * @param {{Object}} payload - Incoming payload in JSON format
-   * @return {{Array}} - Returns an array of episodes of a folder
+   * @return {{Array}} - Returns an array of files of a folder
    */
-  getListOfEpisodes: payload => {
+  getListOfFiles: payload => {
     return new Promise(async (resolve, reject) => {
       try {
         let validSource = false;
@@ -135,11 +136,11 @@ module.exports = Rclone = {
 
         const source = Paths.parseRclonePaths(validSource, payload.sourceFolder);
 
-        Logger.info(`Getting list of episodes from ${source}`);
+        Logger.info(`Getting list of files from ${source}`);
         const command = `${Paths.rclonePath} lsf "${source}" --files-only -R ${flags.rclone.match(/--config \w+\/\w+\.conf/)}`;
         const response = await Promisefied.exec(command);
-        const arrOfEpisodes = response.split('\n').slice(0, -1);
-        resolve(arrOfEpisodes);
+        const arrOfFiles = response.split('\n').slice(0, -1);
+        resolve(arrOfFiles);
       }
       catch (e) {
         Logger.error(e);
