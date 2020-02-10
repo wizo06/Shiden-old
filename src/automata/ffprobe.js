@@ -42,34 +42,26 @@ module.exports = Ffprobe = {
   getAudioFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
       if (payload.audioIndex) {
-        Logger.info(`Payload has specified audio stream index: ${payload.audioIndex}`);
+        Logger.info(`Payload has specified audio index: ${payload.audioIndex}`);
         const audioStream = streams.filter(stream => stream.index == payload.audioIndex)[0];
         if (audioStream.codec_type === 'audio') {
-          resolve(`-map 0:${payload.audioIndex} -acodec aac -ab 320k`);
+          return resolve(`-map 0:${payload.audioIndex} -acodec aac -ab 320k`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.audioIndex} is not an audio stream.`);
-          reject();
+          Logger.error(`Stream with index: ${payload.audioIndex} is not an audio stream or does not exist.`);
+          return reject();
         }
       }
+
+      Logger.info(`Audio index not specified in payload`);
+      Logger.info(`Looking for stereo audio stream`);
+      const stereoAudioStream = streams.filter(stream => stream.channels === 2)[0];
+      if (stereoAudioStream) {
+        return resolve(`-map 0:${stereoAudioStream.index} -acodec aac -ab 320k`);
+      }
       else {
-        Logger.info(`Looking for Japanese audio stream.`);
-        const jpnAAC = streams.filter(stream => {
-          if (stream.tags) return stream.codec_name === 'aac' && stream.tags.language === 'jpn';
-          else return false;
-        })[0];
-
-        const jpnAnyCodec = streams.filter(stream => {
-          if (stream.tags) return stream.codec_type === 'audio' && stream.tags.language === 'jpn';
-          else return false;
-        })[0];
-
-        if (jpnAAC) resolve(`-map 0:${jpnAAC.index} -c:a copy`);
-        else if (jpnAnyCodec) resolve(`-map 0:${jpnAnyCodec.index} -acodec aac -ab 320k`);
-        else {
-          Logger.info(`Did not find Japanese audio stream. Using first available audio stream.`);
-          resolve(`-map 0:a -acodec aac -ab 320k`);
-        }
+        Logger.error(`Stereo audio stream not found. Using first available audio strema.`);
+        return resolve(`-map 0:a -acodec aac -ab 320k`);
       }
     });
   },
@@ -83,21 +75,19 @@ module.exports = Ffprobe = {
   getVideoFlags: (streams, payload) => {
     return new Promise(async (resolve, reject) => {
       if (payload.videoIndex) {
-        Logger.info(`Payload has specified video stream index: ${payload.videoIndex}`);
+        Logger.info(`Payload has specified video index: ${payload.videoIndex}`);
         const videoStream = streams.filter(stream => stream.index == payload.videoIndex)[0];
         if (videoStream.codec_type === 'video') {
-          resolve(`-map 0:${payload.videoIndex} -c:v copy`);
+          return resolve(`-map 0:${payload.videoIndex} -c:v copy`);
         }
         else {
-          Logger.error(`Stream with index: ${payload.videoIndex} is not a video stream.`);
-          reject();
+          Logger.error(`Stream with index: ${payload.videoIndex} is not a video stream or does not exist.`);
+          return reject();
         }
       }
-      else {
-        const videoStream = streams.filter(stream => stream.codec_type === 'video')[0];
-        if (videoStream) resolve(`-map 0:${videoStream.index} -c:v copy`);
-        else resolve(`-map 0:v -c:v copy`);
-      }
+
+      Logger.info(`Video index not specified in payload. Using first available video stream.`);
+      return resolve(`-map 0:v -c:v copy`);
     });
   },
 
@@ -129,7 +119,7 @@ module.exports = Ffprobe = {
     if (payload.subIndex) {
       Logger.info(`Payload has specified subtitle index: ${payload.subIndex}`);
       const payloadSpecifiedSubStream = streams.filter(stream => stream.index == payload.subIndex)[0];
-      if (payloadSpecifiedSubStream) {
+      if (payloadSpecifiedSubStream.codec_type === 'subtitle') {
         return payloadSpecifiedSubStream;
       }
       else {
