@@ -23,9 +23,9 @@ const send = statusCode => {
     try {
       const payload = await Queue.getFirst();
 
-      if (payload.show) {
-        const anilistResponse = await Anilist.query(payload.show);
-        const kitsuResponse = await Kitsu.query(payload.show);
+      if (payload.showName) {
+        const anilistResponse = await Anilist.query(payload.showName);
+        const kitsuResponse = await Kitsu.query(payload.showName);
         const aniDBID = await AnimeOfflineDatabase.query(anilistResponse.id);
         const embed = buildEmbeds(anilistResponse, kitsuResponse, aniDBID, statusCode, payload);
         await postToWebhook(statusCode, embed);

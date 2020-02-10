@@ -70,7 +70,7 @@ npm start -- --clean
   ```json
   {
       "file": "Airing/SHOW NAME/SEASON 1/FILE NAME.MKV",
-      "show": "SHOW NAME",
+      "showName": "SHOW NAME",
       "video_index": 0,
       "audio_index": 1,
       "sub_index": 2
@@ -79,8 +79,8 @@ npm start -- --clean
 
 | Field | Required | Description |
 | --- | --- | --- |
-| file | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
-| show | No | Used for metadata when sending out notifications |
+| file | Yes | Full path of the file to be hardsubbed. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1/FILE NAME.MKV`)  |
+| showName | No | Used for metadata when sending out notifications |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
@@ -96,7 +96,7 @@ npm start -- --clean
   ```json
   {
       "folder": "Airing/SHOW NAME/SEASON 1",
-      "show": "SHOW NAME",
+      "showName": "SHOW NAME",
       "video_index": 0,
       "audio_index": 1,
       "sub_index": 2
@@ -106,7 +106,7 @@ npm start -- --clean
 | Field | Required | Description |
 | --- | --- | --- |
 | folder | Yes | Used to attempt download and upload. **The first folder will be appended with string "[Hardsub]" (without the quotes) when uploading.** (e.g. `Airing [Hardsub]/SHOW NAME/SEASON 1`) |
-| show | No | Used for metadata when sending out notifications |
+| showName | No | Used for metadata when sending out notifications |
 | video_index | No | Stream index number that will be used for video |
 | audio_index | No | Stream index number that will be used for audio |
 | sub_index | No | Stream index number that will be used for subtitle |
@@ -127,19 +127,19 @@ Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-U
 ```json
 [
   {
-    "show": "...",
+    "showName": "...",
     "file": "Grand Blue/Grand Blue - 03 [1080p].mkv"
   },
   {
-    "show": "...",
+    "showName": "...",
     "file": "Grand Blue/Grand Blue - 01 [1080p].mkv"
   },
   {
-    "show": "...",
+    "showName": "...",
     "file": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv"
   },
   {
-    "show": "...",
+    "showName": "...",
     "file": "Grand Blue/Grand Blue - 02 [1080p].mkv"
   }
 ]

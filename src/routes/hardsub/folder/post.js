@@ -18,50 +18,42 @@ module.exports = router.post('/hardsub/folder', async (req, res) => {
   try {
     if (!Auth.authorize(req.get('Authorization'))) return res.status(401).send('Not authorized');
     if (req.get('Content-Type') !== 'application/json') return res.status(415).send('Content-Type must be application/json');
-    const payload = await Promisefied.jsonParse(req.body);
+    const folderPayload = await Promisefied.jsonParse(req.body);
 
     const requiredKeys = ['folder'];
-    const payloadHasAllRequiredKeys = requiredKeys.every(element => typeof payload[element] !== 'undefined');
+    const payloadHasAllRequiredKeys = requiredKeys.every(element => typeof folderPayload[element] !== 'undefined');
     if (!(payloadHasAllRequiredKeys)) return res.status(400).send('Missing required key');
 
     res.status(209).send('Payload accepted');
 
-    for ([key, value] of Object.entries(payload)) {
+    for ([key, value] of Object.entries(folderPayload)) {
       Logger.success(`Loaded ${key}: ${value}`);
     }
 
-    const arrOfEpisodes = await Rclone.getListOfEpisodes(payload);
+    const arrOfFiles = await Rclone.getListOfEpisodes(folderPayload);
 
-    if (!arrOfEpisodes[0]) {
+    if (!arrOfFiles[0]) {
       Logger.debug('No episodes in folder');
       return;
     }
 
     if (await Queue.isEmpty()) {
-      for (episode of arrOfEpisodes) {
+      // If queue is empty, load all episodes then start processing
+      for (episode of arrOfFiles) {
         Logger.info(`Loaded episode: ${episode}`);
-        const episodePayload = {
-          show: payload.show,
-          file: path.join(payload.folder, episode),
-          video_index: payload.video_index,
-          audio_index: payload.audio_index,
-          sub_index: payload.sub_index,
-        };
-        await Queue.push(episodePayload);
+
+        const filePayload = Object.assign({}, folderPayload);
+        await Queue.push(filePayload);
       }
       processNextPayload();
     }
     else {
-      for (episode of arrOfEpisodes) {
+      // Otherwise, simply load all episodes
+      for (episode of arrOfFiles) {
         Logger.info(`Loaded episode: ${episode}`);
-        const episodePayload = {
-          show: payload.show,
-          folder: path.join(payload.folder, episode),
-          video_index: payload.video_index,
-          audio_index: payload.audio_index,
-          sub_index: payload.sub_index,
-        };
-        await Queue.push(episodePayload);
+
+        const filePayload = Object.assign({}, folderPayload);
+        await Queue.push(filePayload);
       }
     }
   }
