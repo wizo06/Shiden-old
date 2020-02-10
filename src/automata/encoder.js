@@ -32,59 +32,53 @@ module.exports = Encoder = {
         const assFile = path.join(tempPath, `sub.ass`);
         const outputFile = path.join(tempPath, fileName).replace(ext, '.mp4');
 
-        // Step 0: Rename file to temp
+        // Step 1: Rename file to temp
         Logger.info(`Renaming file to ${path.basename(tempFile)}`);
         fs.renameSync(originalFile, tempFile);
 
-        // Step 1: FFprobe to extract info from file
-        Logger.info(`[2/4] [1/3] Extracting streams info from ${path.basename(tempFile)}`);
+        // Step 2: FFprobe to extract info from file
+        Logger.info(`Extracting streams info from ${path.basename(tempFile)}`);
         const streams = await Ffprobe.getStreams(tempFile);
 
-        // Step 2: Extract video and audio streams into temp_prepped
-        Logger.info(`[2/4] [2/3] Preparing ${path.basename(tempFile)}`);
+        // Step 3: Extract video and audio streams into temp_prepped
+        Logger.info(`Preparing ${path.basename(tempFile)}`);
         await Ffmpeg.prepare(tempFile, tempPreppedFile, streams, payload);
 
-        // Step 3: Check if original file has subtitle streams
         if (!Ffprobe.hasSub(streams)) {
           // Step 4: If no subtitle stream, simply change container
-          Logger.info(`[2/4] [3/3] Changing container`);
+          Logger.info(`Changing container`);
           await Ffmpeg.changeContainer(tempPreppedFile, outputFile);
         }
         else {
-          // Step 4: If subtitle stream exists, check if it's text based or bitmap based
-          const subStream = Ffprobe.getSubStream(streams, payload);
-          switch (subStream.codecBase) {
-            case 'text':
-              // Step 4.1: If it is text based, extract subtitle stream into sub.ass
-              Logger.info(`[2/4] [3/4] Extracting subtitle file`);
-              await Ffmpeg.extractSubFile(tempFile, subStream.index, assFile);
+          const subStream = Ffprobe.getSubStreamInfo(streams, payload);
+          Logger.info(subStream);
 
-              // Step 4.2: Hardsub temp_prepped with -vf subtitles=sub.ass
-              Logger.info(`[2/4] [4/4] Hardsubbing with text based subtitle`);
-              await Ffmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
-              break;
-            case 'bitmap':
+          try {
+            // First attempt with text based hardsub
+            Logger.info(`Trying with text based hardsub`);
+
+            // Step 4.1: If it is text based, extract subtitle stream into sub.ass
+            Logger.info(`Extracting subtitle file`);
+            await Ffmpeg.extractSubFile(tempFile, subStream.index, assFile);
+
+            // Step 4.2: Hardsub temp_prepped with -vf subtitles=sub.ass
+            Logger.info(`Hardsubbing with text based subtitle`);
+            await Ffmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
+          }
+          catch (e) {
+            try {
+              // If text based hardsub fails, attempt again with bitmap based hardsub
+              Logger.error(`Failed with text based hardsub`);
+              Logger.info(`Trying with bitmap based hardsub`);
+
               // Step 4.1: Hardsub temp_prepped with -filter_complex overlay
-              Logger.info(`[2/4] [3/3] Hardsubbing with bitmap based subtitle`);
+              Logger.info(`Hardsubbing with bitmap based subtitle`);
               await Ffmpeg.hardsubBitmap(tempPreppedFile, tempFile, subStream.index, outputFile);
-              break;
-            default:
-              Logger.info(`Trying with text based hardsub`);
-              try {
-                await Ffmpeg.extractSubFile(tempFile, subStream.index, assFile);
-                await Ffmpeg.hardsubText(tempPreppedFile, assFile, Paths.assetsFolder, outputFile);
-              }
-              catch (e) {
-                try {
-                  Logger.info(`Trying with bitmap based hardsub`);
-                  await Ffmpeg.hardsubBitmap(tempPreppedFile, tempFile, subStream.index, outputFile);
-                }
-                catch (e) {
-                  reject(4);
-                  return;
-                }
-              }
-              break;
+            }
+            catch (e) {
+              reject(4);
+              return;
+            }
           }
         }
 

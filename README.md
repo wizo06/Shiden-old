@@ -26,7 +26,6 @@ It downloads from and uploads to remote/local storages using **rclone**.
   - Videos that have Bitmap based subtitle stream: Use `-filter_complex overlay`
   - **Note**: If the file has both text based and bitmap based subtitle streams, text based stream will be prioritized over bitmap based
 - Option to specify stream index for video, audio and/or subtitle
-- Language priority for subtitles when deciding which subtitle stream to use for hardsubbing
 - Discord notification with webhooks
 
 # Requirements
