@@ -69,14 +69,14 @@ npm start -- --clean
   ```json
   {
       "sourceFile": "TODO/FILE NAME.MKV",
-      "destFile": "DONE/FILE NAME.MOV",
+      "destFolder": "DONE",
   }
   ```  
 
 | Field | Required | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | sourceFile | Yes | String | | Full path of the source file in the remote storage that rclone will download from |
-| destFile | Yes | String | | Full path of the destination file in the remote storage that rclone will upload to |
+| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to |
 | showName | No | String | | Name of the show used for metadata when sending out notifications |
 | videoIndex | No | Number | First available | Stream index number that will be used for video |
 | audioIndex | No | Number | First available | Stream index number that will be used for audio |
@@ -100,7 +100,7 @@ npm start -- --clean
 | Field | Required | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | sourceFolder | Yes | String | | Full path of the source folder in the remote storage that rclone will download from |
-| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to. File name extension will always be `.mp4` |
+| destFolder | Yes | String | | Full path of the destination folder in the remote storage that rclone will upload to |
 | showName | No | String | | Name of the show used for metadata when sending out notifications |
 | videoIndex | No | Number | First available | Stream index number that will be used for video |
 | audioIndex | No | Number | First available | Stream index number that will be used for audio |
@@ -128,19 +128,19 @@ Specifically, [`String.prototype.includes()`](https://developer.mozilla.org/en-U
 [
   {
     "sourceFile": "Grand Blue/Grand Blue - 03 [1080p].mkv",
-    "destFile": "Grand Blue [Hardsub]/Grand Blue - 03 [1080p].mp4"
+    "destFolder": "Grand Blue [Hardsub]"
   },
   {
     "sourceFile": "Grand Blue/Grand Blue - 01 [1080p].mkv",
-    "destFile": "Some folder/output.mp4"
+    "destFolder": "Grand Blue [Hardsub]"
   },
   {
     "sourceFile": "3-gatsu no Lion/3-gatsu no Lion - 01 [1080p].mkv",
-    "destFile": "3-gatsu no Lion [Hardsub]/3-gatsu no Lion - 01 [1080p].mp4"
+    "destFolder": "3-gatsu no Lion [Hardsub]"
   },
   {
     "sourceFile": "Some folder/original.mkv",
-    "destFile": "Grand Blue [Hardsub]/Grand Blue - 02 [1080p].mp4"
+    "destFolder": "Grand Blue [Hardsub]"
   }
 ]
 ```

@@ -30,7 +30,7 @@ module.exports = Encoder = {
         const tempFile = path.join(tempPath, `temp${ext}`);
         const tempPreppedFile = path.join(tempPath, `temp_prepped${ext}`);
         const assFile = path.join(tempPath, `sub.ass`);
-        const outputFile = path.join(tempPath, payload.destFile);
+        const outputFile = path.join(tempPath, fileName.replace(ext, '.mp4'));
 
         // Step 1: Rename file to temp
         Logger.info(`Renaming file to ${path.basename(tempFile)}`);
@@ -51,7 +51,7 @@ module.exports = Encoder = {
         }
         else {
           const subStream = await FFprobe.getSubStreamInfo(streams, payload);
-          Logger.info(subStream);
+          Logger.info(`Codec name: ${subStream.codec_name}`);
 
           try {
             // First attempt with text based hardsub
